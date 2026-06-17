@@ -501,7 +501,7 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
   </div>
   <div class="nav-controls">
     <span class="nav-chapter ch-intro" id="chapterLabel">Introducción</span>
-    <span class="nav-counter" id="counter">1 / 36</span>
+    <span class="nav-counter" id="counter">1 / 37</span>
     <button class="nav-btn nav-btn-icon" id="fsBtn" onclick="togglePresenter()" title="Pantalla completa (F)">⛶</button>
     <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Anterior</button>
     <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
@@ -583,30 +583,6 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
         <div class="mini-bar"><div class="mini-bar-head"><span>Fail</span><span style="color:#f87171;font-weight:700">18.6% · 13 TCs</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:18.6%;background:#dc2626"></div></div></div>
         <div class="mini-bar"><div class="mini-bar-head"><span>Blocked</span><span style="color:#fbbf24;font-weight:700">7.1% · 5 TCs</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:7.1%;background:#d97706"></div></div></div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- SLIDE 8: SUPOSICIONES -->
-<div class="slide" id="s8">
-  <div class="slide-tag">Alcance</div>
-  <div class="slide-title">Suposiciones y <span>Limitaciones</span></div>
-  <div class="grid-2" style="gap:20px">
-    <div>
-      <div style="font-size:var(--text-base);font-weight:600;color:#4ade80;margin-bottom:10px;letter-spacing:0.05em">✓ SUPOSICIONES</div>
-      <div class="con-card green" style="margin-bottom:10px"><p>Entorno de pruebas disponible sin interrupciones durante todo el ciclo.</p></div>
-      <div class="con-card green" style="margin-bottom:10px"><p>Credenciales de admin y usuario regular activas durante todo el proyecto.</p></div>
-      <div class="con-card green" style="margin-bottom:10px"><p>Datos de prueba suficientes en el sistema demo.</p></div>
-      <div class="con-card green" style="margin-bottom:10px"><p>Comportamiento funcional estable y sin cambios durante la ejecución.</p></div>
-      <div class="con-card green"><p>Roles y permisos correctamente configurados en el entorno.</p></div>
-    </div>
-    <div>
-      <div style="font-size:var(--text-base);font-weight:600;color:#f87171;margin-bottom:10px;letter-spacing:0.05em">⚠ LIMITACIONES</div>
-      <div class="con-card red" style="margin-bottom:10px"><p>Alcance limitado a 12 módulos: Login, Dashboard, Directory, Admin, PIM, Time, Recruitment, Performance, Maintenance, My Info, Claim y Buzz.</p></div>
-      <div class="con-card red" style="margin-bottom:10px"><p>Pruebas 100% manuales, sin automatización.</p></div>
-      <div class="con-card red" style="margin-bottom:10px"><p>Entorno demo público — datos pueden ser modificados por terceros.</p></div>
-      <div class="con-card red" style="margin-bottom:10px"><p>Sin pruebas de carga, estrés ni concurrencia.</p></div>
-      <div class="con-card red"><p>Sin documentación técnica interna del producto disponible.</p></div>
     </div>
   </div>
 </div>
@@ -723,6 +699,40 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
       </div>
       <p>Variables cruzadas: Vacancy, Resume format, Contact, Keywords, Consent, Notes. Cobertura de pares sin probar el espacio combinatorio completo.</p>
     </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: SUPOSICIONES -->
+<div class="slide" id="s8">
+  <div class="slide-tag">Alcance</div>
+  <div class="slide-title">Suposiciones y <span>Limitaciones</span></div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div style="font-size:var(--text-base);font-weight:600;color:#4ade80;margin-bottom:10px;letter-spacing:0.05em">✓ SUPOSICIONES</div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Entorno de pruebas disponible sin interrupciones durante todo el ciclo.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Credenciales de admin y usuario regular activas durante todo el proyecto.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Datos de prueba suficientes en el sistema demo.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Comportamiento funcional estable y sin cambios durante la ejecución.</p></div>
+      <div class="con-card green"><p>Roles y permisos correctamente configurados en el entorno.</p></div>
+    </div>
+    <div>
+      <div style="font-size:var(--text-base);font-weight:600;color:#f87171;margin-bottom:10px;letter-spacing:0.05em">⚠ LIMITACIONES</div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Alcance limitado a 12 módulos: Login, Dashboard, Directory, Admin, PIM, Time, Recruitment, Performance, Maintenance, My Info, Claim y Buzz.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Pruebas 100% manuales, sin automatización.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Entorno demo público — datos pueden ser modificados por terceros.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Sin pruebas de carga, estrés ni concurrencia.</p></div>
+      <div class="con-card red"><p>Sin documentación técnica interna del producto disponible.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: MÓDULOS TESTEADOS -->
+<div class="slide section-slide" id="sSecModules">
+  <div style="text-align:center;max-width:640px;margin:0 auto">
+    <div class="section-act">III</div>
+    <div class="section-label">Parte III</div>
+    <div class="slide-title">Módulos <span>testeados</span></div>
+    <div class="slide-subtitle">Describir la estrategia por módulo — 12 módulos · 6 integrantes · 70 LLTCs</div>
   </div>
 </div>
 
@@ -868,8 +878,8 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
 <!-- SECTION: EJECUCIÓN -->
 <div class="slide section-slide" id="sSecExec">
   <div style="text-align:center;max-width:640px;margin:0 auto">
-    <div class="section-act">III</div>
-    <div class="section-label">Parte III</div>
+    <div class="section-act">IV</div>
+    <div class="section-label">Parte IV</div>
     <div class="slide-title">Ejecución &amp; <span>ciclos</span></div>
     <div class="slide-subtitle">Ejecución cruzada y trazabilidad en Zephyr</div>
   </div>
@@ -951,8 +961,8 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
 <!-- SECTION: RESULTADOS -->
 <div class="slide section-slide" id="sSecResults">
   <div style="text-align:center;max-width:640px;margin:0 auto">
-    <div class="section-act">IV</div>
-    <div class="section-label">Parte IV</div>
+    <div class="section-act">V</div>
+    <div class="section-label">Parte V</div>
     <div class="slide-title">Resultados <span>globales</span></div>
     <div class="slide-subtitle">Métricas de ejecución, bugs, observaciones y análisis del equipo</div>
   </div>
@@ -1574,8 +1584,8 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
 <!-- SECTION: CONCLUSIONES -->
 <div class="slide section-slide" id="sSecClose">
   <div style="text-align:center;max-width:640px;margin:0 auto">
-    <div class="section-act">V</div>
-    <div class="section-label">Parte V</div>
+    <div class="section-act">VI</div>
+    <div class="section-label">Parte VI</div>
     <div class="slide-title"><span>Conclusiones</span></div>
     <div class="slide-subtitle">Hallazgos, recomendaciones y trabajo colaborativo del Grupo A</div>
   </div>
@@ -1703,14 +1713,14 @@ table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
 <div class="progress-dots" id="dots"></div>
 
 <script>
-const SLIDE_ORDER = ['s1','s2','s8','sSecStrategy','s3','s4','sExploratory','sDomainComb','sModAntonio','sModRomina','sModBryan','sModJavier','sModPierre','sModRosa','sSecExec','s9','sZephyr','sSecResults','s10','s11','s12new','s12','sBlocked','sFailVsBug','s13','s14','s15','s16','sObs','s17','sBvsE','sSecClose','s18','s19','s20','s21'];
+const SLIDE_ORDER = ['s1','s2','sSecStrategy','s3','s4','sExploratory','sDomainComb','s8','sSecModules','sModAntonio','sModRomina','sModBryan','sModJavier','sModPierre','sModRosa','sSecExec','s9','sZephyr','sSecResults','s10','s11','s12new','s12','sBlocked','sFailVsBug','s13','s14','s15','s16','sObs','s17','sBvsE','sSecClose','s18','s19','s20','s21'];
 const TOTAL = SLIDE_ORDER.length;
 const CHAPTERS = [
-  { label:'Introducción', from:1, to:3, cls:'ch-intro' },
-  { label:'Estrategia', from:4, to:14, cls:'ch-strategy' },
-  { label:'Ejecución', from:15, to:17, cls:'ch-exec' },
-  { label:'Resultados', from:18, to:31, cls:'ch-results' },
-  { label:'Conclusiones', from:32, to:TOTAL, cls:'ch-close' }
+  { label:'Introducción', from:1, to:2, cls:'ch-intro' },
+  { label:'Estrategia', from:3, to:15, cls:'ch-strategy' },
+  { label:'Ejecución', from:16, to:18, cls:'ch-exec' },
+  { label:'Resultados', from:19, to:32, cls:'ch-results' },
+  { label:'Conclusiones', from:33, to:TOTAL, cls:'ch-close' }
 ];
 let current = 1;
 let chartsBuilt = {};
