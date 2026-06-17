@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Capstone — OrangeHRM · SQE2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-deep:#060912;
+  --bg-base:#0b1020;
+  --bg-elevated:#111827;
+  --accent:#22d3ee;
+  --accent-2:#818cf8;
+  --accent-3:#34d399;
+  --accent-soft:rgba(34,211,238,0.12);
+  --accent-glow:rgba(34,211,238,0.35);
+  --violet-soft:rgba(129,140,248,0.14);
+  --chart-pass:#16a34a;
+  --chart-fail:#dc2626;
+  --chart-block:#d97706;
+  --chart-high:#dc2626;
+  --chart-med:#d97706;
+  --chart-low:#64748b;
+  --chart-major:#fbbf24;
+  --green:#16a34a;
+  --green-lit:#4ade80;
+  --red:#dc2626;
+  --red-lit:#f87171;
+  --yellow:#d97706;
+  --yellow-lit:#fbbf24;
+  --purple-lit:#c4b5fd;
+  --gray-400:#94a3b8;
+  --gray-600:#64748b;
+  --white:#f8fafc;
+  --text-muted:rgba(248,250,252,0.72);
+  --text-body:rgba(248,250,252,0.92);
+  --glass:rgba(255,255,255,0.04);
+  --glass-border:rgba(255,255,255,0.08);
+  --glass-strong:rgba(255,255,255,0.07);
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:8px;
+  --shadow-glow:0 0 40px rgba(34,211,238,0.08);
+  --nav-h:72px;
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --text-xs:0.8125rem;
+  --text-sm:0.9375rem;
+  --text-base:1.0625rem;
+  --text-md:1.125rem;
+  --text-lg:1.25rem;
+  --text-xl:1.5rem;
+  --text-2xl:clamp(2rem,3.6vw,2.75rem);
+  --text-3xl:clamp(2.25rem,4.2vw,3.25rem);
+  --leading-tight:1.2;
+  --leading-normal:1.65;
+  --leading-relaxed:1.75;
+}
+html{font-size:17px}
+body{
+  font-family:var(--font-body);
+  font-size:var(--text-base);
+  line-height:var(--leading-normal);
+  font-weight:500;
+  background:var(--bg-deep);
+  color:var(--white);
+  overflow:hidden;
+  width:100vw;
+  height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.bg-scene{
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(34,211,238,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 90% 80%, rgba(129,140,248,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(52,211,153,0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #060912 0%, #0b1020 45%, #0a0f1c 100%);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35;
+  background-image:
+    linear-gradient(rgba(34,211,238,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,0.04) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse 90% 80% at 50% 40%, black 20%, transparent 75%);
+}
+.bg-orb{
+  position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;
+  animation:orbFloat 18s ease-in-out infinite;
+}
+.bg-orb-1{width:420px;height:420px;background:rgba(34,211,238,0.12);top:-120px;left:-80px}
+.bg-orb-2{width:360px;height:360px;background:rgba(129,140,248,0.14);bottom:-100px;right:-60px;animation-delay:-6s}
+.bg-orb-3{width:280px;height:280px;background:rgba(52,211,153,0.08);top:40%;left:55%;animation-delay:-12s}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(20px,-16px) scale(1.04)}
+}
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 28px;height:var(--nav-h);
+  background:rgba(6,9,18,0.72);
+  border-bottom:1px solid var(--glass-border);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+}
+.nav::after{
+  content:'';position:absolute;bottom:0;left:0;height:2px;
+  background:linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+  width:calc(var(--progress, 3.22%) * 1);
+  box-shadow:0 0 12px var(--accent-glow);
+  transition:width 0.35s cubic-bezier(.4,0,.2,1);
+}
+.nav-logo{font-family:var(--font-display);font-weight:700;font-size:var(--text-md);color:var(--white);display:flex;align-items:center;gap:10px;letter-spacing:-0.02em}
+.nav-badge{font-size:var(--text-xs);font-weight:600;background:var(--accent-soft);color:#67e8f9;padding:4px 10px;border-radius:999px;border:1px solid rgba(34,211,238,0.25);letter-spacing:0.04em;text-transform:uppercase}
+.nav-controls{display:flex;align-items:center;gap:10px}
+.nav-counter{font-size:var(--text-sm);color:var(--gray-400);font-weight:500;padding:6px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-border);font-variant-numeric:tabular-nums}
+.nav-btn{background:var(--glass-strong);border:1px solid var(--glass-border);color:var(--white);padding:10px 18px;border-radius:999px;cursor:pointer;font-size:var(--text-sm);font-weight:600;transition:all 0.2s ease}
+.nav-btn:hover{background:rgba(34,211,238,0.12);border-color:rgba(34,211,238,0.35);box-shadow:0 0 20px rgba(34,211,238,0.12);transform:translateY(-1px)}
+.nav-btn:disabled{opacity:0.28;cursor:default;transform:none;box-shadow:none}
+.slides{width:100vw;height:100vh;padding-top:var(--nav-h);overflow:hidden;position:relative;z-index:1}
+.slide{position:absolute;top:var(--nav-h);left:0;right:0;bottom:0;display:none;overflow:auto;padding:36px 60px 80px;scrollbar-width:thin;scrollbar-color:rgba(34,211,238,0.3) transparent}
+.slide.active{display:flex;flex-direction:column;justify-content:flex-start;animation:slideIn 0.45s cubic-bezier(.22,1,.36,1) both}
+.section-slide.active{justify-content:center;align-items:center}
+.slide-inner{width:100%;max-width:1180px;margin:0 auto}
+.slide-header{flex-shrink:0;margin-bottom:4px}
+.slide-tag{display:inline-flex;align-items:center;gap:8px;font-size:var(--text-xs);font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#67e8f9;margin-bottom:12px;padding:6px 12px;border-radius:999px;background:var(--accent-soft);border:1px solid rgba(34,211,238,0.2)}
+.slide-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.slide-title{font-family:var(--font-display);font-weight:700;font-size:var(--text-2xl);color:var(--white);line-height:1.12;margin-bottom:8px;letter-spacing:-0.03em}
+.slide-title span{background:linear-gradient(135deg,#22d3ee 0%,#818cf8 55%,#34d399 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.slide-subtitle{font-size:var(--text-md);color:var(--text-muted);margin-bottom:28px;max-width:640px;line-height:1.6}
+.divider{width:56px;height:3px;margin-bottom:28px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent-glow)}
+.card,.glass-panel{background:linear-gradient(145deg,rgba(255,255,255,0.06) 0%,rgba(255,255,255,0.02) 100%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:22px 24px;backdrop-filter:blur(12px);box-shadow:var(--shadow-glow);transition:border-color 0.2s,transform 0.2s}
+.card:hover,.glass-panel:hover{border-color:rgba(34,211,238,0.18)}
+.card-blue,.panel-accent{background:linear-gradient(145deg,rgba(34,211,238,0.1) 0%,rgba(129,140,248,0.06) 100%);border-color:rgba(34,211,238,0.22)}
+.card h3,.glass-panel h3{font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;color:#a5f3fc;margin-bottom:10px;letter-spacing:0.03em;text-transform:uppercase}
+.card p,.card li,.glass-panel p,.glass-panel li{font-size:var(--text-base);color:var(--text-body);line-height:1.65}
+.card ul,.glass-panel ul{padding-left:18px}
+.card li,.glass-panel li{margin-bottom:6px}
+.info-block{display:flex;gap:16px;align-items:flex-start;padding:18px 20px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--glass-border);transition:transform 0.2s,border-color 0.2s}
+.info-block:hover{transform:translateY(-2px);border-color:rgba(34,211,238,0.2)}
+.info-block-icon{font-size:var(--text-xl);flex-shrink:0;line-height:1;margin-top:2px}
+.info-block-label{font-size:var(--text-xs);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#67e8f9;margin-bottom:6px}
+.info-block-body{font-size:var(--text-base);color:var(--text-body);line-height:1.6}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.metric,.kpi{position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0.02) 100%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:18px 20px;text-align:center}
+.metric-val,.kpi-val{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,3.2vw,2.75rem);color:var(--white);line-height:1;letter-spacing:-0.03em}
+.metric-label,.kpi-label{font-size:var(--text-xs);color:var(--gray-400);margin-top:6px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.metric.green .metric-val,.kpi.pass .kpi-val{color:var(--green-lit)}
+.metric.red .metric-val,.kpi.fail .kpi-val{color:var(--red-lit)}
+.metric.yellow .metric-val,.kpi.block .kpi-val{color:var(--yellow-lit)}
+.metric.blue .metric-val,.kpi.accent .kpi-val{color:#67e8f9}
+.kpi.pass{border-color:rgba(22,163,74,0.25);background:linear-gradient(160deg,rgba(22,163,74,0.12),rgba(22,163,74,0.04))}
+.kpi.fail{border-color:rgba(220,38,38,0.25);background:linear-gradient(160deg,rgba(220,38,38,0.12),rgba(220,38,38,0.04))}
+.kpi.block{border-color:rgba(217,119,6,0.25);background:linear-gradient(160deg,rgba(217,119,6,0.12),rgba(217,119,6,0.04))}
+.kpi.accent{border-color:rgba(34,211,238,0.25);background:linear-gradient(160deg,rgba(34,211,238,0.12),rgba(34,211,238,0.04))}
+table.styled{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--text-sm)}
+table.styled th{text-align:left;padding:14px 18px;background:linear-gradient(180deg,rgba(34,211,238,0.14) 0%,rgba(34,211,238,0.06) 100%);color:#a5f3fc;font-weight:700;font-size:var(--text-xs);letter-spacing:0.06em;text-transform:uppercase}
+table.styled th:first-child{border-radius:var(--radius-xs) 0 0 0}
+table.styled th:last-child{border-radius:0 var(--radius-xs) 0 0}
+table.styled td{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--text-body);background:rgba(255,255,255,0.01)}
+table.styled tbody tr:hover td{background:rgba(34,211,238,0.05)}
+table.styled tr:last-child td{border-bottom:none}
+.badge{display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:var(--text-xs);font-weight:700;letter-spacing:0.03em}
+.badge-green{background:rgba(22,163,74,0.18);color:var(--green-lit);border:1px solid rgba(74,222,128,0.25)}
+.badge-red{background:rgba(220,38,38,0.18);color:var(--red-lit);border:1px solid rgba(248,113,113,0.25)}
+.badge-yellow{background:rgba(217,119,6,0.18);color:var(--yellow-lit);border:1px solid rgba(251,191,36,0.25)}
+.badge-blue{background:rgba(34,211,238,0.14);color:#67e8f9;border:1px solid rgba(34,211,238,0.25)}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--gray-400);border:1px solid var(--glass-border)}
+.badge-purple{background:rgba(129,140,248,0.16);color:var(--purple-lit);border:1px solid rgba(196,181,253,0.25)}
+.pill-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.pill{background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.22);color:#a5f3fc;border-radius:999px;padding:6px 16px;font-size:var(--text-sm);font-weight:600}
+.pbar-row{margin-bottom:14px}
+.pbar-label{display:flex;justify-content:space-between;font-size:var(--text-sm);margin-bottom:6px;color:var(--text-body);font-weight:500}
+.pbar-track{height:10px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+.pbar-fill{height:100%;border-radius:999px}
+.mini-bar{margin-bottom:10px}
+.mini-bar-head{display:flex;justify-content:space-between;font-size:var(--text-sm);margin-bottom:4px;color:var(--text-body)}
+.mini-bar-track{height:8px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:999px}
+.chart-wrap,.chart-panel{position:relative;width:100%}
+.chart-panel{padding:20px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%);border:1px solid var(--glass-border);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);box-sizing:border-box;overflow:visible}
+.chart-panel .chart-wrap{height:100%;min-height:260px;position:relative}
+.chart-panel > canvas{width:100%!important;height:100%!important;display:block}
+.cover-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:0;height:calc(100vh - var(--nav-h));margin:-36px -60px -80px;min-height:520px}
+.cover-left{display:flex;flex-direction:column;justify-content:center;padding:64px 72px;position:relative;overflow:hidden}
+.cover-left::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(34,211,238,0.12),transparent 50%)}
+.cover-right{display:flex;flex-direction:column;justify-content:center;padding:48px 40px;gap:12px;background:linear-gradient(180deg,rgba(129,140,248,0.08) 0%,rgba(34,211,238,0.04) 100%);border-left:1px solid var(--glass-border);backdrop-filter:blur(8px)}
+.cover-eyebrow{font-size:var(--text-sm);font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#67e8f9;margin-bottom:16px}
+.cover-title{font-family:var(--font-display);font-weight:700;font-size:var(--text-3xl);line-height:1.02;color:var(--white);margin-bottom:12px;letter-spacing:-0.04em;position:relative}
+.cover-title span{background:linear-gradient(135deg,#22d3ee,#818cf8,#34d399);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.cover-sub{font-size:var(--text-lg);color:var(--text-muted);margin-bottom:28px;line-height:1.5}
+.cover-meta{font-size:var(--text-sm);color:var(--gray-400);padding:10px 14px;border-radius:var(--radius-sm);background:var(--glass);border:1px solid var(--glass-border);display:inline-block}
+.cover-stats{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+.cover-stat{padding:12px 18px;border-radius:var(--radius-sm);background:var(--glass);border:1px solid var(--glass-border);min-width:100px}
+.cover-stat-val{font-family:var(--font-display);font-weight:800;font-size:var(--text-xl);color:var(--white)}
+.cover-stat-label{font-size:var(--text-xs);color:var(--gray-400);margin-top:2px;text-transform:uppercase;letter-spacing:0.06em}
+.team-chip{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:11px 14px;display:flex;align-items:center;gap:12px;transition:all 0.2s ease}
+.team-chip:hover{background:rgba(34,211,238,0.06);border-color:rgba(34,211,238,0.2);transform:translateX(4px)}
+.team-chip-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(34,211,238,0.25),rgba(129,140,248,0.25));border:1px solid rgba(34,211,238,0.3);display:flex;align-items:center;justify-content:center;font-size:var(--text-xs);font-weight:800;color:#67e8f9;flex-shrink:0}
+.team-chip-name{font-size:var(--text-base);font-weight:500;color:var(--text-body)}
+.technique-row{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius-sm);margin-bottom:8px;background:var(--glass);border:1px solid var(--glass-border);transition:transform 0.2s,border-color 0.2s}
+.technique-row:hover{transform:translateX(4px);border-color:rgba(34,211,238,0.18)}
+.technique-icon{width:44px;height:44px;flex-shrink:0;border-radius:12px;background:linear-gradient(135deg,rgba(34,211,238,0.2),rgba(129,140,248,0.15));border:1px solid rgba(34,211,238,0.25);display:flex;align-items:center;justify-content:center;font-size:var(--text-base);font-weight:800;color:#67e8f9}
+.technique-name{font-size:var(--text-md);font-weight:700;color:var(--white);margin-bottom:4px;font-family:var(--font-display)}
+.technique-desc{font-size:var(--text-base);color:var(--text-muted);line-height:1.55}
+.mod-card{background:linear-gradient(160deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:18px;height:100%;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s}
+.mod-card:hover{transform:translateY(-3px);border-color:rgba(34,211,238,0.22);box-shadow:0 12px 40px rgba(0,0,0,0.25),0 0 0 1px rgba(34,211,238,0.08)}
+.mod-card.featured{border-color:rgba(34,211,238,0.3);background:linear-gradient(160deg,rgba(34,211,238,0.1),rgba(129,140,248,0.05))}
+.mod-card-name{font-size:var(--text-xs);font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#67e8f9;margin-bottom:10px}
+.mod-card p,.mod-card li{font-size:var(--text-sm);color:var(--text-muted);line-height:1.6}
+.mod-card ul{padding-left:16px;margin-top:8px}
+.cross-row{display:flex;align-items:center;gap:0;padding:12px 14px;margin-bottom:6px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.02);border:1px solid transparent;transition:all 0.15s}
+.cross-row:hover{background:rgba(34,211,238,0.05);border-color:rgba(34,211,238,0.12)}
+.cross-owner{font-size:var(--text-base);font-weight:600;color:var(--white);flex:1}
+.cross-arrow{color:var(--accent);font-size:var(--text-md);padding:0 14px;opacity:0.7}
+.cross-tester{font-size:var(--text-base);color:#67e8f9;font-weight:600;flex:1}
+.sev-critical{color:var(--red-lit);font-weight:700}
+.sev-major{color:var(--chart-major);font-weight:700}
+.sev-medium{color:var(--text-body)}
+.sev-low{color:var(--gray-400);font-size:var(--text-sm)}
+.con-card{border-left:3px solid var(--accent);background:linear-gradient(90deg,rgba(34,211,238,0.08) 0%,transparent 100%);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px 20px;border-top:1px solid var(--glass-border);border-right:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border)}
+.con-card.green{border-left-color:var(--green-lit);background:linear-gradient(90deg,rgba(22,163,74,0.1),transparent)}
+.con-card.red{border-left-color:var(--red-lit);background:linear-gradient(90deg,rgba(220,38,38,0.1),transparent)}
+.con-card.yellow{border-left-color:var(--yellow-lit);background:linear-gradient(90deg,rgba(217,119,6,0.1),transparent)}
+.con-card h4{font-family:var(--font-display);font-size:var(--text-md);font-weight:700;color:var(--white);margin-bottom:8px}
+.con-card p,.con-card li{font-size:var(--text-base);color:var(--text-body);line-height:1.65}
+.con-card ul{padding-left:18px}
+.callout{padding:16px 20px;border-radius:var(--radius-sm);font-size:var(--text-base);line-height:1.6;color:var(--text-body);border:1px solid var(--glass-border)}
+.callout-accent{background:linear-gradient(135deg,rgba(34,211,238,0.08),rgba(129,140,248,0.06));border-color:rgba(34,211,238,0.18)}
+.callout-green{background:rgba(22,163,74,0.08);border-color:rgba(74,222,128,0.2)}
+.callout-red{background:rgba(220,38,38,0.08);border-color:rgba(248,113,113,0.2)}
+.callout-yellow{background:rgba(217,119,6,0.08);border-color:rgba(251,191,36,0.2)}
+.enh-row{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;margin-bottom:8px;border-radius:var(--radius-sm);background:var(--glass);border:1px solid var(--glass-border)}
+.enh-tag{flex-shrink:0;font-size:var(--text-xs);font-weight:800;letter-spacing:0.06em;padding:5px 10px;border-radius:999px;background:rgba(129,140,248,0.16);border:1px solid rgba(196,181,253,0.28);color:var(--purple-lit)}
+.enh-title{font-size:var(--text-base);color:var(--text-body);line-height:1.5;flex:1}
+.enh-owner{font-size:var(--text-sm);color:var(--gray-400);margin-top:4px}
+.rec-item{display:flex;gap:16px;align-items:flex-start;padding:16px 18px;margin-bottom:10px;border-radius:var(--radius-sm);background:var(--glass);border:1px solid var(--glass-border);transition:transform 0.2s,border-color 0.2s}
+.rec-item:hover{transform:translateX(6px);border-color:rgba(34,211,238,0.18)}
+.rec-num{flex-shrink:0;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(34,211,238,0.25),rgba(129,140,248,0.2));border:1px solid rgba(34,211,238,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:var(--text-base);font-weight:800;color:#67e8f9}
+.rec-content h4{font-family:var(--font-display);font-size:var(--text-md);font-weight:700;color:var(--white);margin-bottom:4px}
+.rec-content p{font-size:var(--text-base);color:var(--text-muted);line-height:1.55}
+.obs-card{padding:14px 18px;border-radius:var(--radius-sm);font-size:var(--text-sm);line-height:1.5}
+.obs-card.success{background:rgba(22,163,74,0.08);border:1px solid rgba(74,222,128,0.18)}
+.obs-card.warn{background:rgba(217,119,6,0.08);border:1px solid rgba(251,191,36,0.18)}
+.obs-card.error{background:rgba(220,38,38,0.08);border:1px solid rgba(248,113,113,0.18)}
+.obs-card-title{font-size:var(--text-sm);font-weight:700;margin-bottom:4px}
+.obs-card.success .obs-card-title{color:var(--green-lit)}
+.obs-card.warn .obs-card-title{color:var(--yellow-lit)}
+.obs-card.error .obs-card-title{color:var(--red-lit)}
+.obs-card-text{color:var(--text-muted);font-style:italic}
+.progress-dots{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:200;padding:8px 14px;border-radius:999px;background:rgba(6,9,18,0.75);border:1px solid var(--glass-border);backdrop-filter:blur(16px);max-width:90vw;overflow-x:auto}
+.dot{width:7px;height:7px;border-radius:999px;flex-shrink:0;background:rgba(255,255,255,0.18);transition:all 0.25s ease;cursor:pointer}
+.dot:hover{background:rgba(34,211,238,0.5)}
+.dot.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));width:22px;box-shadow:0 0 12px var(--accent-glow)}
+.section-slide{justify-content:center;align-items:center;text-align:center;background:radial-gradient(circle at 50% 40%,rgba(34,211,238,0.1) 0%,transparent 55%)}
+.section-label{font-size:var(--text-sm);font-weight:700;letter-spacing:0.16em;color:#67e8f9;text-transform:uppercase;margin-bottom:16px}
+.section-slide .slide-title{font-size:clamp(2.5rem,5vw,3.5rem);margin-bottom:16px}
+.panel-footer{margin-top:16px;padding:16px 20px;border-radius:var(--radius-sm);font-size:var(--text-base);color:var(--text-body);line-height:1.6}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat-box{padding:16px;border-radius:var(--radius-sm);text-align:center;background:var(--glass);border:1px solid var(--glass-border)}
+.stat-box.accent{border-color:rgba(34,211,238,0.25);background:linear-gradient(160deg,rgba(34,211,238,0.1),rgba(34,211,238,0.03))}
+.stat-box-val{font-family:var(--font-display);font-weight:800;font-size:var(--text-2xl);line-height:1;color:var(--white)}
+.stat-box-label{font-size:var(--text-xs);color:var(--gray-400);margin-top:6px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.results-panel{padding:18px 20px;border-radius:var(--radius);background:var(--glass);border:1px solid var(--glass-border)}
+.results-panel-title{font-size:var(--text-xs);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:14px}
+a.link-accent{color:#67e8f9;text-decoration:none;border-bottom:1px solid rgba(34,211,238,0.3);transition:color 0.2s}
+a.link-accent:hover{color:#a5f3fc}
+
+/* Presenter mode */
+body.presenter-mode .nav,body.presenter-mode .progress-dots{opacity:0;pointer-events:none;transform:translateY(-8px);transition:opacity 0.35s ease,transform 0.35s ease}
+body.presenter-mode.show-chrome .nav,body.presenter-mode.show-chrome .progress-dots{opacity:1;pointer-events:auto;transform:none}
+body.presenter-mode .slides{padding-top:0}
+body.presenter-mode .slide{top:0;padding-bottom:48px}
+body.presenter-mode .cover-grid{height:100vh;margin:-36px -60px -48px}
+.nav-chapter{font-size:var(--text-xs);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 12px;border-radius:999px;border:1px solid var(--glass-border);background:var(--glass);color:#67e8f9;transition:all 0.3s ease}
+.nav-chapter.ch-strategy{color:#c4b5fd;border-color:rgba(196,181,253,0.3);background:rgba(129,140,248,0.12)}
+.nav-chapter.ch-exec{color:#67e8f9;border-color:rgba(34,211,238,0.3)}
+.nav-chapter.ch-results{color:#4ade80;border-color:rgba(74,222,128,0.3);background:rgba(22,163,74,0.1)}
+.nav-chapter.ch-close{color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(217,119,6,0.1)}
+.nav-btn-icon{padding:10px 14px;min-width:44px}
+@keyframes titleGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(34,211,238,0.3))}50%{filter:drop-shadow(0 0 20px rgba(129,140,248,0.45))}}
+.cover-title span{display:inline-block;animation:titleGlow 4s ease-in-out infinite}
+.team-chip--presenter{border-color:rgba(34,211,238,0.45);background:rgba(34,211,238,0.1);box-shadow:0 0 24px rgba(34,211,238,0.12)}
+.cover-uni{font-size:var(--text-sm);font-weight:700;color:var(--accent);letter-spacing:0.06em;margin-bottom:8px}
+.cell-pass{color:var(--green-lit);font-weight:600}
+.cell-fail{color:var(--red-lit);font-weight:600}
+.cell-block{color:var(--yellow-lit);font-weight:600}
+.row-total{font-weight:700}
+.row-total td{border-top:1px solid rgba(255,255,255,0.15)!important}
+.row-highlight td{background:rgba(34,211,238,0.08)!important;box-shadow:inset 3px 0 0 var(--accent)}
+table.styled tbody tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
+.insight-card{padding:14px 18px;border-radius:var(--radius-sm);font-size:var(--text-base);line-height:1.55;color:var(--text-body)}
+.insight-card.green{background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.25)}
+.insight-card.green strong{color:var(--green-lit);display:block;margin-bottom:4px}
+.insight-card.cyan{background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.22)}
+.insight-card.cyan strong{color:#a5f3fc;display:block;margin-bottom:4px}
+.insight-card.yellow{background:rgba(217,119,6,0.1);border:1px solid rgba(217,119,6,0.25)}
+.insight-card.yellow strong{color:var(--yellow-lit);display:block;margin-bottom:4px}
+.hero-kpi{text-align:center;margin-bottom:18px;padding:20px 28px;border-radius:var(--radius);background:linear-gradient(160deg,rgba(22,163,74,0.14),rgba(22,163,74,0.04));border:1px solid rgba(22,163,74,0.3);box-shadow:0 0 60px rgba(22,163,74,0.08)}
+.hero-kpi-val{font-family:var(--font-display);font-weight:800;font-size:clamp(2.25rem,6vw,3.75rem);color:var(--green-lit);line-height:1;letter-spacing:-0.04em}
+.hero-kpi-label{font-size:var(--text-md);color:var(--text-muted);margin-top:8px;font-weight:600}
+.hero-kpi-sub{font-size:var(--text-sm);color:var(--gray-400);margin-top:4px}
+.highlight-card{padding:14px 16px;border-radius:var(--radius-sm);background:var(--glass);border:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.highlight-card strong{color:var(--white)}
+.chart-panel-tall{min-height:360px;padding:20px;display:flex;flex-direction:column;box-sizing:border-box}
+.chart-panel-tall .chart-wrap{flex:1;min-height:280px;height:auto}
+.chart-panel-tall > canvas{flex:1;min-height:280px;max-height:320px}
+.detail-table-wrap{max-height:0;overflow:hidden;opacity:0;transition:max-height 0.5s ease,opacity 0.4s ease,margin 0.4s ease;margin-top:0}
+.detail-table-wrap.open{max-height:800px;opacity:1;margin-top:16px}
+.detail-toggle{font-size:var(--text-xs);color:var(--gray-400);margin-top:8px;cursor:pointer;user-select:none}
+.detail-toggle:hover{color:#67e8f9}
+.icon-svg{width:28px;height:28px;flex-shrink:0;color:#67e8f9}
+.section-act{font-family:var(--font-display);font-size:clamp(4rem,10vw,7rem);font-weight:800;line-height:1;color:rgba(34,211,238,0.08);margin-bottom:-20px;letter-spacing:-0.04em}
+.section-slide .slide-subtitle{margin:0 auto;text-align:center;max-width:520px}
+.closing-team{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:20px 0 24px}
+.closing-chip{padding:8px 14px;border-radius:999px;background:var(--glass);border:1px solid var(--glass-border);font-size:var(--text-sm);color:var(--text-body);font-weight:600}
+.pbar-fill,.mini-bar-fill{transition:width 1s cubic-bezier(.22,1,.36,1)}
+.pbar-fill.animate,.mini-bar-fill.animate{width:var(--target-w)!important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}
+  .cover-title span{animation:none}
+}
+.slide.active .slide-inner>.kpi,.slide.active .slide-inner>.card,.slide.active .slide-inner>.info-block,.slide.active .slide-inner>.technique-row,.slide.active .slide-inner>.mod-card,.slide.active .slide-inner>.hero-kpi,.slide.active .slide-inner>.insight-card,.slide.active .cover-stat,.slide.active .team-chip{animation:fadeUp 0.55s cubic-bezier(.22,1,.36,1) both}
+.slide.active .kpi-grid .kpi:nth-child(1),.slide.active .cover-stats .cover-stat:nth-child(1){animation-delay:0.05s}
+.slide.active .kpi-grid .kpi:nth-child(2),.slide.active .cover-stats .cover-stat:nth-child(2){animation-delay:0.1s}
+.slide.active .kpi-grid .kpi:nth-child(3),.slide.active .cover-stats .cover-stat:nth-child(3){animation-delay:0.15s}
+.slide.active .kpi-grid .kpi:nth-child(4),.slide.active .cover-stats .cover-stat:nth-child(4){animation-delay:0.2s}
+.slide.active .grid-2>.card:nth-child(1),.slide.active .grid-3>.mod-card:nth-child(1){animation-delay:0.08s}
+.slide.active .grid-2>.card:nth-child(2),.slide.active .grid-3>.mod-card:nth-child(2){animation-delay:0.14s}
+.slide.active .grid-3>.mod-card:nth-child(3){animation-delay:0.2s}
+.slide.active .closing-team .closing-chip:nth-child(1){animation-delay:0.1s}
+.slide.active .closing-team .closing-chip:nth-child(2){animation-delay:0.15s}
+.slide.active .closing-team .closing-chip:nth-child(3){animation-delay:0.2s}
+.slide.active .closing-team .closing-chip:nth-child(4){animation-delay:0.25s}
+.slide.active .closing-team .closing-chip:nth-child(5){animation-delay:0.3s}
+.slide.active .closing-team .closing-chip:nth-child(6){animation-delay:0.35s}
+@media (max-width:960px){.slide{padding:24px 24px 80px}.grid-2,.grid-3,.grid-4,.kpi-grid,.cover-grid,.stat-grid{grid-template-columns:1fr}.cover-grid{margin:-24px -24px -80px;height:auto;min-height:0}.cover-left,.cover-right{padding:32px 24px}}
+</style>
+</head>
+<body>
+<div class="bg-scene"></div>
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-logo">
+    <span>TestS · Capstone</span>
+    <span class="nav-badge">OrangeHRM · SQE2 · Grupo A</span>
+  </div>
+  <div class="nav-controls">
+    <span class="nav-chapter ch-intro" id="chapterLabel">Introducción</span>
+    <span class="nav-counter" id="counter">1 / 34</span>
+    <button class="nav-btn nav-btn-icon" id="fsBtn" onclick="togglePresenter()" title="Pantalla completa (F)">⛶</button>
+    <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Anterior</button>
+    <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+  </div>
+</nav>
+
+<div class="slides">
+
+<!-- SLIDE 1: PORTADA -->
+<div class="slide active" id="s1">
+  <div class="cover-grid">
+    <div class="cover-left">
+      <div class="cover-uni">Jala University</div>
+      <div class="cover-eyebrow">Ingeniería de Calidad de Software 2</div>
+      <div class="cover-title">Test Strategy<br/><span>Capstone Final</span></div>
+      <div class="cover-sub">OrangeHRM · Grupo A · Sección D · Jala University</div>
+      <div class="cover-meta">14 de junio, 2026 &nbsp;·&nbsp; CSSQ-233.GA.T1.26.M3</div>
+      <div class="cover-stats">
+        <div class="cover-stat"><div class="cover-stat-val" data-count="70" data-suffix="">0</div><div class="cover-stat-label">Test Cases</div></div>
+        <div class="cover-stat"><div class="cover-stat-val" data-count="12" data-suffix="">0</div><div class="cover-stat-label">Módulos</div></div>
+        <div class="cover-stat"><div class="cover-stat-val" data-count="74.3" data-suffix="%" data-decimals="1">0</div><div class="cover-stat-label">Pass Rate</div></div>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div style="font-size:var(--text-xs);font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-400);margin-bottom:8px;">Equipo · 6 integrantes</div>
+      <div class="team-chip"><div class="team-chip-avatar">RC</div><div class="team-chip-name">Romina Calani Cruz</div></div>
+      <div class="team-chip"><div class="team-chip-avatar">RP</div><div class="team-chip-name">Rosa Mery Poma Condori</div></div>
+      <div class="team-chip"><div class="team-chip-avatar">JP</div><div class="team-chip-name">Javier Perez Adriazola</div></div>
+      <div class="team-chip"><div class="team-chip-avatar">AB</div><div class="team-chip-name">Antonio Binda</div></div>
+      <div class="team-chip team-chip--presenter"><div class="team-chip-avatar">PC</div><div class="team-chip-name">Jean Pierre Crespin Huaman</div></div>
+      <div class="team-chip"><div class="team-chip-avatar">BG</div><div class="team-chip-name">Bryan Steven Gaitan Echeverry</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: INTRO -->
+<div class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="slide-tag">Introducción</div>
+    <div class="slide-title">¿Qué estamos <span>testeando?</span></div>
+    <div class="divider"></div>
+    <div class="grid-2" style="gap:22px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="info-block">
+          <div class="info-block-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M9 11h1M9 15h1M14 7h1M14 11h1M14 15h1M8 21v-3h8v3"/></svg></div>
+          <div>
+            <div class="info-block-label">Sistema bajo prueba</div>
+            <div class="info-block-body"><strong style="color:#fff">OrangeHRM</strong> — plataforma open source de gestión de Recursos Humanos. Cubre reclutamiento, empleados, asistencia, permisos, performance y mantenimiento.</div>
+            <div style="margin-top:8px"><a class="link-accent" href="https://opensource-demo.orangehrmlive.com">opensource-demo.orangehrmlive.com</a></div>
+          </div>
+        </div>
+        <div class="info-block">
+          <div class="info-block-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></div>
+          <div>
+            <div class="info-block-label">Objetivo del proyecto</div>
+            <div class="info-block-body">Evaluar la <strong style="color:#fff">calidad funcional y no funcional</strong> de 12 módulos mediante pruebas basadas en riesgos, ejecución cruzada y reporte en Jira/Zephyr.</div>
+          </div>
+        </div>
+        <div class="info-block">
+          <div class="info-block-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 005.4-5.4l-2.5 1.3-1.3 2.5z"/></svg></div>
+          <div>
+            <div class="info-block-label">Stack de testing</div>
+            <div class="pill-row">
+              <span class="pill">Jira</span><span class="pill">Zephyr Scale</span><span class="pill">OrangeHRM Demo</span><span class="pill">Manual QA</span><span class="pill">Excel · Gráficos</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="results-panel">
+        <div class="results-panel-title">Resumen del proyecto</div>
+        <div class="stat-grid" style="margin-bottom:16px">
+          <div class="stat-box accent"><div class="stat-box-val" style="color:#67e8f9">70</div><div class="stat-box-label">Test Cases</div></div>
+          <div class="stat-box accent"><div class="stat-box-val" style="color:#67e8f9">12</div><div class="stat-box-label">Módulos</div></div>
+          <div class="stat-box"><div class="stat-box-val">6</div><div class="stat-box-label">Integrantes</div></div>
+          <div class="stat-box"><div class="stat-box-val">15</div><div class="stat-box-label">Issues</div></div>
+        </div>
+        <div class="results-panel-title">Resultados globales</div>
+        <div class="mini-bar"><div class="mini-bar-head"><span>Pass</span><span style="color:#4ade80;font-weight:700">74.3% · 52 TCs</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:74.3%;background:#16a34a"></div></div></div>
+        <div class="mini-bar"><div class="mini-bar-head"><span>Fail</span><span style="color:#f87171;font-weight:700">18.6% · 13 TCs</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:18.6%;background:#dc2626"></div></div></div>
+        <div class="mini-bar"><div class="mini-bar-head"><span>Blocked</span><span style="color:#fbbf24;font-weight:700">7.1% · 5 TCs</span></div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:7.1%;background:#d97706"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION: ESTRATEGIA -->
+<div class="slide section-slide" id="sSecStrategy">
+  <div style="text-align:center;max-width:640px;margin:0 auto">
+    <div class="section-act">II</div>
+    <div class="section-label">Parte II</div>
+    <div class="slide-title">Estrategia de <span>pruebas</span></div>
+    <div class="slide-subtitle">Técnicas, dominios, módulos y alcance del Test Strategy</div>
+  </div>
+</div>
+
+<!-- SLIDE 3: OBJETIVOS -->
+<div class="slide" id="s3">
+  <div class="slide-tag">Objetivos</div>
+  <div class="slide-title">Objetivos de <span>Testeo</span></div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div class="card" style="margin-bottom:16px;background:rgba(34,211,238,0.08);border-color:rgba(34,211,238,0.25)">
+        <h3>Objetivo general</h3>
+        <p>Evaluar calidad, confiabilidad y comportamiento de los módulos de OrangeHRM mediante pruebas estructuradas y basadas en riesgos, generando métricas objetivas sobre el estado del sistema.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Objetivos específicos</h3>
+        <ul>
+          <li>Verificar funcionalidades críticas y reglas de negocio</li>
+          <li>Detectar defectos funcionales y reportarlos en Jira</li>
+          <li>Validar seguridad, usabilidad y tiempos de respuesta</li>
+          <li>Aplicar Domain Testing y Combinatorial Testing (All Pairs)</li>
+          <li>Ejecutar pruebas cruzadas entre integrantes</li>
+          <li>Obtener métricas de ejecución, defect density y pass rate</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: TÉCNICAS -->
+<div class="slide" id="s4">
+  <div class="slide-tag">Estrategia</div>
+  <div class="slide-title">Técnicas de <span>Testeo</span></div>
+  <div class="grid-2">
+    <div>
+      <div class="technique-row">
+        <div class="technique-icon">F</div>
+        <div><div class="technique-name">Functional Testing</div><div class="technique-desc">Reglas de negocio, validaciones de campos, búsquedas, creación y actualización de registros.</div></div>
+      </div>
+      <div class="technique-row">
+        <div class="technique-icon">NF</div>
+        <div><div class="technique-name">Non-Functional Testing</div><div class="technique-desc">Usabilidad, seguridad (XSS, SQL injection), tiempos de respuesta y responsividad multi-dispositivo.</div></div>
+      </div>
+      <div class="technique-row">
+        <div class="technique-icon">ET</div>
+        <div><div class="technique-name">Exploratory Testing</div><div class="technique-desc">Tours Feature, Variable, Transaction, Data y User sobre módulos clave.</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="technique-row">
+        <div class="technique-icon">DT</div>
+        <div><div class="technique-name">Domain Testing</div><div class="technique-desc">Clases de equivalencia y valores límite en Recruitment → Add Candidate/Vacancy.</div></div>
+      </div>
+      <div class="technique-row">
+        <div class="technique-icon">CT</div>
+        <div><div class="technique-name">Combinatorial Testing</div><div class="technique-desc">All Pairs / Pairwise sobre Recruitment → Add Candidate. 42 combinaciones generadas.</div></div>
+      </div>
+      <div class="technique-row">
+        <div class="technique-icon">RB</div>
+        <div><div class="technique-name">Risk-Based Testing</div><div class="technique-desc">Priorización de módulos según impacto operativo y complejidad funcional.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: EXPLORATORY TESTING -->
+<div class="slide" id="sExploratory">
+  <div class="slide-tag">Estrategia · Exploración</div>
+  <div class="slide-title">Exploratory Testing — <span>Tours aplicados</span></div>
+  <div class="grid-2" style="gap:16px">
+    <div>
+      <div class="technique-row"><div class="technique-icon">F</div><div><div class="technique-name">Feature Tour</div><div class="technique-desc">Login, My Info, Time y Claim — mapeo de funcionalidades principales antes del diseño de LLTCs.</div></div></div>
+      <div class="technique-row"><div class="technique-icon">V</div><div><div class="technique-name">Variable Tour</div><div class="technique-desc">Análisis de campos y variables en Login y My Info para identificar clases de equivalencia y riesgos de validación.</div></div></div>
+      <div class="technique-row"><div class="technique-icon">T</div><div><div class="technique-name">Transaction Tour</div><div class="technique-desc">Flujo completo de Time hasta generación de reportes de empleados — validación end-to-end.</div></div></div>
+    </div>
+    <div>
+      <div class="technique-row"><div class="technique-icon">D</div><div><div class="technique-name">Data Tour</div><div class="technique-desc">PIM → Add Employee: ciclo de vida del dato desde creación hasta uso en otros módulos.</div></div></div>
+      <div class="technique-row"><div class="technique-icon">U</div><div><div class="technique-name">User Tour</div><div class="technique-desc">Time con roles Administrador vs Empleado — diferencias de privilegios y comportamiento por perfil.</div></div></div>
+      <div class="callout callout-accent panel-footer">
+        Los hallazgos exploratorios alimentaron el <strong style="color:#a5f3fc">Risk-Based Testing</strong> y la priorización de módulos para el diseño de los 70 LLTCs.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: DOMAIN + COMBINATORIAL -->
+<div class="slide" id="sDomainComb">
+  <div class="slide-tag">Estrategia · Recruitment</div>
+  <div class="slide-title">Domain &amp; Combinatorial <span>Testing</span></div>
+  <div class="grid-2" style="gap:20px">
+    <div class="card card-blue">
+      <h3>Domain Testing</h3>
+      <p style="margin-bottom:10px">Formularios analizados con clases de equivalencia y valores límite:</p>
+      <ul>
+        <li><strong>Recruitment → Add Candidate</strong> — Resume (.pdf/.docx, ≤1MB), Keywords, campos obligatorios/opcionales</li>
+        <li><strong>Recruitment → Add Vacancy</strong> — Vacancy Name (1–50 chars), No. of Positions, Job Title dropdown</li>
+      </ul>
+      <div class="pill-row" style="margin-top:10px"><span class="pill">Equivalence Partitioning</span><span class="pill">Boundary Values</span></div>
+    </div>
+    <div class="card">
+      <h3>Combinatorial Testing — All Pairs</h3>
+      <p style="margin-bottom:10px">Feature: <strong>Recruitment → Add Candidate</strong></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div class="metric blue"><div class="metric-val" style="font-size:var(--text-xl)">42</div><div class="metric-label">Combinaciones pairwise</div></div>
+        <div class="metric"><div class="metric-val" style="font-size:var(--text-xl)">27</div><div class="metric-label">TCs en Recruitment</div></div>
+      </div>
+      <p>Variables cruzadas: Vacancy, Resume format, Contact, Keywords, Consent, Notes. Cobertura de pares sin probar el espacio combinatorio completo.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: MÓDULOS 1-4 -->
+<div class="slide" id="s5">
+  <div class="slide-tag">Estrategia por Módulos · 1 de 3</div>
+  <div class="slide-title">Módulos <span>1 – 4</span></div>
+  <div class="grid-4" style="gap:14px">
+    <div class="mod-card">
+      <div class="mod-card-name">Login</div>
+      <p>Credenciales válidas/inválidas, SQL injection, campos obligatorios, bloqueo de sesión, recuperación de contraseña.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">PIM</div>
+      <p>Add Employee: validación de nombres y caracteres especiales. Employee ID readonly. Búsqueda y filtros en Employee List.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Admin</div>
+      <p>Job Title: mensajes de error claros en campos vacíos. Nationalities: tiempo de carga &lt;2 segundos.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Time</div>
+      <p>Hoja de tiempo: límite 24h/día, campos Proyecto/Actividad obligatorios. Punch In/Out. Responsividad en tablet.</p>
+    </div>
+  </div>
+  <div style="margin-top:20px;padding:14px 18px;background:rgba(34,211,238,0.06);border-radius:var(--radius);border:1px solid rgba(34,211,238,0.15)">
+    <div style="font-size:var(--text-sm);color:var(--gray-400);margin-bottom:6px;font-weight:600;letter-spacing:0.05em">TIPOS DE PRUEBA APLICADOS</div>
+    <div class="pill-row">
+      <span class="pill">Functional</span>
+      <span class="pill">Security (XSS / SQLi)</span>
+      <span class="pill">Performance</span>
+      <span class="pill">Responsividad</span>
+      <span class="pill">Boundary Values</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: MÓDULOS 5-7 -->
+<div class="slide" id="s6">
+  <div class="slide-tag">Estrategia por Módulos · 2 de 3</div>
+  <div class="slide-title">Módulos <span>5 – 7</span></div>
+  <div class="grid-3" style="gap:14px">
+    <div class="mod-card">
+      <div class="mod-card-name">My Info</div>
+      <p>Contact Details, Emergency Contacts, Dependents, Immigration, Personal Details, Memberships. Validación de fechas, XSS, formatos de archivo y truncamiento decimal.</p>
+    </div>
+    <div class="mod-card featured" style="border-color:rgba(34,211,238,0.3)">
+      <div class="mod-card-name">Recruitment ⭐</div>
+      <p>Add Candidate: Domain Testing en Resume (.pdf/.docx, ≤1MB) y Keywords. Combinatorial Testing All Pairs — 42 combinaciones pairwise. Módulo con mayor cobertura (27 TCs).</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Directory</div>
+      <p>Búsqueda de empleados por nombre, filtros, autocompletado, consistencia de resultados post-filtro y restricciones de acceso post-logout.</p>
+    </div>
+  </div>
+  <div style="margin-top:20px;padding:14px 18px;background:rgba(34,211,238,0.06);border-radius:var(--radius);border:1px solid rgba(34,211,238,0.15)">
+    <div style="font-size:var(--text-sm);color:var(--gray-400);margin-bottom:6px;font-weight:600;letter-spacing:0.05em">TÉCNICAS ESPECIALES</div>
+    <div class="pill-row">
+      <span class="pill">Domain Testing</span>
+      <span class="pill">All Pairs / Pairwise</span>
+      <span class="pill">Equivalence Partitioning</span>
+      <span class="pill">Boundary Value Analysis</span>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: MÓDULOS 8-12 -->
+<div class="slide" id="s7">
+  <div class="slide-tag">Estrategia por Módulos · 3 de 3</div>
+  <div class="slide-title">Módulos <span>8 – 12</span></div>
+  <div class="grid-4" style="gap:14px;margin-bottom:14px">
+    <div class="mod-card">
+      <div class="mod-card-name">Dashboard</div>
+      <p>Widgets y tiempos de carga. Responsividad en escritorio, móvil y tablet.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Claim</div>
+      <p>Creación, consulta, asignación y seguimiento de reclamos. Filtros. Responsividad multi-dispositivo.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Performance</div>
+      <p>Manage Reviews: filtros usables, labels accesibles. Employee Tracker carga &lt;3s. Layout móvil 375px.</p>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Maintenance</div>
+      <p>Purge Records: re-autenticación requerida antes de ejecutar purga. Control de acceso por rol.</p>
+    </div>
+  </div>
+  <div class="grid-2" style="gap:14px">
+    <div class="mod-card">
+      <div class="mod-card-name">Leave</div>
+      <p>Entitlements: rechazo de valores negativos y fuera de rango. Filtros de historial.</p>
+    </div>
+    <div class="card" style="background:rgba(22,163,74,0.08);border-color:rgba(22,163,74,0.25)">
+      <h3 style="color:#4ade80">Cobertura total</h3>
+      <p>12 módulos cubiertos · 70 TCs · ejecución 100% manual · entorno demo público</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: BUZZ + LEAVE -->
+<div class="slide" id="sBuzzLeave">
+  <div class="slide-tag">Estrategia por Módulos · complemento</div>
+  <div class="slide-title">Buzz &amp; <span>Leave</span></div>
+  <div class="grid-2" style="gap:16px">
+    <div class="mod-card" style="border-color:rgba(34,211,238,0.25)">
+      <div class="mod-card-name">Buzz ⭐</div>
+      <p style="margin-bottom:10px">Red social interna: publicaciones, interacciones y feed. Estrategia definida por Pierre Crespin.</p>
+      <ul style="font-size:var(--text-base);color:rgba(255,255,255,0.72);line-height:1.55;padding-left:16px">
+        <li>Validación de creación de posts y comportamiento ante clicks repetidos</li>
+        <li>Usabilidad del Buzz Feed — falta búsqueda y filtros (enhancement propuesto)</li>
+        <li><strong style="color:#f87171">1 bug:</strong> posts duplicados al hacer click repetido durante procesamiento</li>
+      </ul>
+      <div class="pill-row" style="margin-top:8px"><span class="pill">Functional</span><span class="pill">Usability</span></div>
+    </div>
+    <div class="mod-card">
+      <div class="mod-card-name">Leave</div>
+      <p style="margin-bottom:10px">4 TCs ejecutados (Pierre: 2 · Rosa: 1). Complementa el alcance principal de 12 módulos.</p>
+      <ul style="font-size:var(--text-base);color:rgba(255,255,255,0.72);line-height:1.55;padding-left:16px">
+        <li>Entitlements: rechazo de valores negativos y fuera de rango</li>
+        <li>Leave List: filtros por fecha, empleado y status</li>
+        <li>Tiempos de respuesta al buscar registros de permisos</li>
+        <li>Resultado: <strong style="color:#4ade80">3 pass</strong> · <strong style="color:#fbbf24">1 blocked</strong></li>
+      </ul>
+      <div class="pill-row" style="margin-top:8px"><span class="pill">Functional</span><span class="pill">Performance</span></div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:var(--radius);border:1px solid rgba(255,255,255,0.08);font-size:var(--text-base);color:var(--text-muted)">
+    <strong style="color:#a5f3fc">Nota de alcance:</strong> Buzz forma parte de los 12 módulos oficiales del Test Strategy. Leave se probó como extensión del ciclo Capstone con TCs en Zephyr.
+  </div>
+</div>
+
+
+<!-- SECTION: EJECUCIÓN -->
+<div class="slide section-slide" id="sSecExec">
+  <div style="text-align:center;max-width:640px;margin:0 auto">
+    <div class="section-act">III</div>
+    <div class="section-label">Parte III</div>
+    <div class="slide-title">Ejecución &amp; <span>ciclos</span></div>
+    <div class="slide-subtitle">Suposiciones, ejecución cruzada y trazabilidad en Zephyr</div>
+  </div>
+</div>
+
+<!-- SLIDE 8: SUPOSICIONES -->
+<div class="slide" id="s8">
+  <div class="slide-tag">Alcance</div>
+  <div class="slide-title">Suposiciones y <span>Limitaciones</span></div>
+  <div class="grid-2" style="gap:20px">
+    <div>
+      <div style="font-size:var(--text-base);font-weight:600;color:#4ade80;margin-bottom:10px;letter-spacing:0.05em">✓ SUPOSICIONES</div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Entorno de pruebas disponible sin interrupciones durante todo el ciclo.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Credenciales de admin y usuario regular activas durante todo el proyecto.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Datos de prueba suficientes en el sistema demo.</p></div>
+      <div class="con-card green" style="margin-bottom:10px"><p>Comportamiento funcional estable y sin cambios durante la ejecución.</p></div>
+      <div class="con-card green"><p>Roles y permisos correctamente configurados en el entorno.</p></div>
+    </div>
+    <div>
+      <div style="font-size:var(--text-base);font-weight:600;color:#f87171;margin-bottom:10px;letter-spacing:0.05em">⚠ LIMITACIONES</div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Alcance limitado a 12 módulos: Login, Dashboard, Directory, Admin, PIM, Time, Recruitment, Performance, Maintenance, My Info, Claim y Buzz.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Pruebas 100% manuales, sin automatización.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Entorno demo público — datos pueden ser modificados por terceros.</p></div>
+      <div class="con-card red" style="margin-bottom:10px"><p>Sin pruebas de carga, estrés ni concurrencia.</p></div>
+      <div class="con-card red"><p>Sin documentación técnica interna del producto disponible.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: CROSS EXECUTION -->
+<div class="slide" id="s9">
+  <div class="slide-tag">Ejecución Cruzada</div>
+  <div class="slide-title">Orden de ejecución <span>de test cycles</span></div>
+  <div class="grid-2" style="gap:24px;align-items:start">
+    <div class="card">
+      <h3 style="margin-bottom:14px">Propietario → Tester asignado</h3>
+      <div class="cross-row"><div class="cross-owner">Pierre Crespin</div><div class="cross-arrow">→</div><div class="cross-tester">Bryan Gaitan</div></div>
+      <div class="cross-row"><div class="cross-owner">Rosa Poma</div><div class="cross-arrow">→</div><div class="cross-tester">Pierre Crespin</div></div>
+      <div class="cross-row"><div class="cross-owner">Romina Calani</div><div class="cross-arrow">→</div><div class="cross-tester">Rosa Poma</div></div>
+      <div class="cross-row"><div class="cross-owner">Javier Perez</div><div class="cross-arrow">→</div><div class="cross-tester">Romina Calani</div></div>
+      <div class="cross-row"><div class="cross-owner">Antonio Binda</div><div class="cross-arrow">→</div><div class="cross-tester">Javier Perez</div></div>
+      <div class="cross-row"><div class="cross-owner">Bryan Gaitan</div><div class="cross-arrow">→</div><div class="cross-tester">Antonio Binda</div></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>Módulos por test cycle</h3>
+        <table class="styled" style="margin-top:8px">
+          <thead><tr><th>Propietario</th><th>Módulos</th></tr></thead>
+          <tbody>
+            <tr><td>Pierre Crespin</td><td>Claim · Recruitment · Leave</td></tr>
+            <tr><td>Rosa Poma</td><td>Recruitment · Leave · My Info · Performance · Maintenance</td></tr>
+            <tr><td>Romina Calani</td><td>Admin · Recruitment · Time</td></tr>
+            <tr><td>Javier Perez</td><td>Directory · Dashboard · Recruitment</td></tr>
+            <tr><td>Antonio Binda</td><td>Login · Recruitment · PIM</td></tr>
+            <tr><td>Bryan Gaitan</td><td>My Info · Recruitment</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px;background:rgba(34,211,238,0.08);border-radius:var(--radius);border:1px solid rgba(34,211,238,0.15);font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+        Cada miembro es propietario de sus TCs. La ejecución es realizada por otro integrante del equipo, garantizando independencia en la evaluación.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: ZEPHYR + LLTC IDs -->
+<div class="slide" id="sZephyr">
+  <div class="slide-tag">Ejecución · Trazabilidad</div>
+  <div class="slide-title">Ciclos Zephyr &amp; <span>LLTC IDs</span></div>
+  <div class="grid-2" style="gap:20px;align-items:start">
+    <div class="card">
+      <h3>Test Cycles en Zephyr Scale</h3>
+      <table class="styled" style="margin-top:8px;font-size:var(--text-sm)">
+        <thead><tr><th>Propietario</th><th>Ciclos de ejecución cruzada</th></tr></thead>
+        <tbody>
+          <tr><td>Pierre</td><td>Claim · Recruitment · Leave</td></tr>
+          <tr><td>Rosa</td><td>Recruitment · Leave · My Info · Performance · Maintenance</td></tr>
+          <tr><td>Romina</td><td>Admin · Recruitment · Time</td></tr>
+          <tr><td>Javier</td><td>Directory · Dashboard · Recruitment</td></tr>
+          <tr><td>Antonio</td><td>Login · Recruitment · PIM</td></tr>
+          <tr><td>Bryan</td><td>My Info · Recruitment</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card card-blue">
+      <h3>LLTC asignados por propietario</h3>
+      <table class="styled" style="margin-top:8px;font-size:var(--text-sm)">
+        <thead><tr><th>Propietario</th><th>IDs LLTC</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Pierre Crespin</td><td style="color:var(--text-muted)">003, 001, 049, 070-1, 070, 069, 002, 0023-1, 026, 025, 054, 055, 024</td><td><strong>13</strong></td></tr>
+          <tr><td>Rosa Poma</td><td style="color:var(--text-muted)">004, 005, 006, 019, 020, 021, 022, 045, 060–064, 076</td><td><strong>14</strong></td></tr>
+          <tr><td>Romina Calani</td><td style="color:var(--text-muted)">007, 008, 009, 039–042, 050, 051, 065, 066</td><td><strong>11</strong></td></tr>
+          <tr><td>Javier Perez</td><td style="color:var(--text-muted)">012, 010, 011, 034, 033, 032, 043, 031, 056, 055, 067</td><td><strong>11</strong></td></tr>
+          <tr><td>Antonio Binda</td><td style="color:var(--text-muted)">013, 014, 015, 044, 052, 053, 071, 072</td><td><strong>6</strong></td></tr>
+          <tr><td>Bryan Gaitan</td><td style="color:var(--text-muted)">027, 017, 028–030, 046, 058, 059, 073–078, 016, 018</td><td><strong>15</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION: RESULTADOS -->
+<div class="slide section-slide" id="sSecResults">
+  <div style="text-align:center;max-width:640px;margin:0 auto">
+    <div class="section-act">IV</div>
+    <div class="section-label">Parte IV</div>
+    <div class="slide-title">Resultados <span>globales</span></div>
+    <div class="slide-subtitle">Métricas de ejecución, bugs, observaciones y análisis del equipo</div>
+  </div>
+</div>
+
+<!-- SLIDE 10: RESUMEN GENERAL -->
+<div class="slide" id="s10">
+  <div class="slide-inner">
+  <header class="slide-header">
+    <div class="slide-tag">Resultados</div>
+    <div class="slide-title">Resumen general de <span>ejecución</span></div>
+    <div class="divider"></div>
+  </header>
+  <div class="hero-kpi">
+    <div class="hero-kpi-val" id="heroPassRate" data-count="74.3" data-suffix="%" data-decimals="1">0%</div>
+    <div class="hero-kpi-label">Pass Rate global · 52 de 70 TCs</div>
+    <div class="hero-kpi-sub">Ejecución 100% · 0 TCs sin correr</div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi pass"><div class="kpi-val">52</div><div class="kpi-label">TCs Pass</div></div>
+    <div class="kpi fail"><div class="kpi-val">13</div><div class="kpi-label">TCs Fail</div></div>
+    <div class="kpi block"><div class="kpi-val">5</div><div class="kpi-label">TCs Blocked</div></div>
+    <div class="kpi accent"><div class="kpi-val">0</div><div class="kpi-label">TCs Not Run</div></div>
+  </div>
+  <div class="grid-3" style="gap:14px">
+    <div>
+      <div class="chart-panel" style="height:140px;margin-bottom:12px"><canvas id="chartSummary" role="img" aria-label="Distribución Pass Fail Blocked"></canvas></div>
+      <div class="pbar-row">
+        <div class="pbar-label"><span>Pass Rate</span><span class="cell-pass">74.3%</span></div>
+        <div class="pbar-track"><div class="pbar-fill pbar-animate" data-width="74.3" style="width:0;background:#16a34a"></div></div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label"><span>Fail Rate</span><span class="cell-fail">18.6%</span></div>
+        <div class="pbar-track"><div class="pbar-fill pbar-animate" data-width="18.6" style="width:0;background:#dc2626"></div></div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label"><span>Blocked Rate</span><span class="cell-block">7.1%</span></div>
+        <div class="pbar-track"><div class="pbar-fill pbar-animate" data-width="7.1" style="width:0;background:#d97706"></div></div>
+      </div>
+      <div class="pbar-row">
+        <div class="pbar-label"><span>Execution Rate</span><span style="color:#67e8f9">100%</span></div>
+        <div class="pbar-track"><div class="pbar-fill pbar-animate" data-width="100" style="width:0;background:linear-gradient(90deg,#22d3ee,#818cf8)"></div></div>
+      </div>
+    </div>
+    <div class="card card-blue">
+      <h3>Métricas clave</h3>
+      <table style="width:100%;font-size:var(--text-base);margin-top:6px">
+        <tr><td style="color:var(--gray-400);padding:4px 0">Total TCs</td><td style="color:var(--white);text-align:right;font-weight:600">70</td></tr>
+        <tr><td style="color:var(--gray-400);padding:4px 0">Módulos cubiertos</td><td style="color:var(--white);text-align:right;font-weight:600">12</td></tr>
+        <tr><td style="color:var(--gray-400);padding:4px 0">Bugs reportados</td><td style="color:#f87171;text-align:right;font-weight:600">9</td></tr>
+        <tr><td style="color:var(--gray-400);padding:4px 0">Enhancements</td><td style="color:#c4b5fd;text-align:right;font-weight:600">6</td></tr>
+        <tr><td style="color:var(--gray-400);padding:4px 0">Defect Density</td><td style="color:#fbbf24;text-align:right;font-weight:600">0.13 bugs/TC</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Módulos destacados</h3>
+      <div style="margin-top:6px">
+        <div class="highlight-card"><strong>Recruitment</strong><span class="badge badge-blue">27 TCs</span></div>
+        <div class="highlight-card"><strong>My Info</strong><span class="badge badge-red">4 fail</span></div>
+        <div class="highlight-card"><strong>Directory</strong><span class="badge badge-red">3 fail</span></div>
+        <div class="highlight-card"><strong>Buzz</strong><span class="badge badge-yellow">1 bug</span></div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: TCs POR MÓDULO -->
+<div class="slide" id="s11">
+  <div class="slide-tag">Resultados</div>
+  <div class="slide-title">TCs ejecutados <span>por módulo</span></div>
+  <div class="chart-panel chart-panel-tall" style="height:380px;margin-bottom:18px">
+    <div class="chart-wrap">
+    <canvas id="chartModulo" role="img" aria-label="Gráfico de barras de test cases por módulo">Recruitment 27, My Info 11, Directory 6, Claim 6, Time 5, Login 3, Leave 3+1, Performance 3, Dashboard 2, Admin 2, PIM 1, Maintenance 1.</canvas>
+    </div>
+  </div>
+  <div class="grid-3" style="gap:14px;margin-bottom:8px">
+    <div class="mod-card featured"><div class="mod-card-name">Recruitment</div><p><strong>27 TCs</strong> · 21 pass · 3 fail · 3 blocked</p></div>
+    <div class="mod-card"><div class="mod-card-name">My Info</div><p><strong>11 TCs</strong> · <span class="cell-fail">4 fail</span> — mayor densidad de bugs</p></div>
+    <div class="mod-card"><div class="mod-card-name">Directory</div><p><strong>6 TCs</strong> · <span class="cell-fail">3 fail</span></p></div>
+    <div class="mod-card"><div class="mod-card-name">Claim</div><p><strong>6 TCs</strong> · <span class="cell-block">2 blocked</span> · Pierre Crespin</p></div>
+    <div class="mod-card"><div class="mod-card-name">Buzz</div><p><strong>1 bug</strong> · posts duplicados al click repetido</p></div>
+    <div class="mod-card"><div class="mod-card-name">Time</div><p><strong>5 TCs</strong> · <span class="cell-fail">2 fail</span></p></div>
+  </div>
+  <div class="detail-toggle" id="detailToggle" onclick="toggleDetailTable()" title="Tecla D">▸ Ver tabla completa (D)</div>
+  <div class="detail-table-wrap" id="detailTableWrap">
+    <table class="styled">
+      <thead><tr><th>Módulo</th><th>Total</th><th>Pass</th><th>Fail</th><th>Blocked</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td>Recruitment</td><td>27</td><td class="cell-pass">21</td><td class="cell-fail">3</td><td class="cell-block">3</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Romina/Rosa/Javier/Pierre/Antonio/Bryan</td></tr>
+        <tr><td>My Info</td><td>11</td><td class="cell-pass">7</td><td class="cell-fail">4</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Bryan Gaitan</td></tr>
+        <tr><td>Directory</td><td>6</td><td class="cell-pass">3</td><td class="cell-fail">3</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Javier Perez</td></tr>
+        <tr><td>Claim</td><td>6</td><td class="cell-pass">4</td><td class="cell-fail">0</td><td class="cell-block">2</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Pierre Crespin</td></tr>
+        <tr><td>Time</td><td>5</td><td class="cell-pass">3</td><td class="cell-fail">2</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Romina Calani</td></tr>
+        <tr><td>Leave</td><td>4</td><td class="cell-pass">3</td><td>0</td><td class="cell-block">1</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Pierre/Rosa</td></tr>
+        <tr><td>Performance</td><td>3</td><td class="cell-pass">3</td><td>0</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Rosa Poma</td></tr>
+        <tr><td>Login</td><td>3</td><td class="cell-pass">3</td><td>0</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Antonio Binda</td></tr>
+        <tr><td>Dashboard</td><td>2</td><td class="cell-pass">2</td><td>0</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Javier Perez</td></tr>
+        <tr><td>Admin</td><td>2</td><td class="cell-pass">1</td><td class="cell-fail">1</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Romina Calani</td></tr>
+        <tr><td>Maintenance</td><td>1</td><td class="cell-pass">1</td><td>0</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Rosa Poma</td></tr>
+        <tr><td>PIM</td><td>1</td><td>0</td><td class="cell-fail">1</td><td>0</td><td style="font-size:var(--text-sm);color:var(--text-muted)">Antonio Binda</td></tr>
+        <tr class="row-total"><td>TOTAL</td><td>70</td><td class="cell-pass">52</td><td class="cell-fail">13</td><td class="cell-block">5</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 12: RESULTADOS INDIVIDUALES -->
+<div class="slide" id="s12new">
+  <div class="slide-tag">Resultados · Individual</div>
+  <div class="slide-title">Resultados por <span>integrante</span></div>
+  <table class="styled">
+    <thead>
+      <tr><th>Integrante</th><th>TCs (owner)</th><th style="color:#4ade80">Pass</th><th style="color:#f87171">Fail</th><th style="color:#fbbf24">Blocked</th><th>Ejecutado por</th><th>Pass %</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Bryan Gaitan</strong></td><td>15</td>
+        <td style="color:#4ade80">12</td><td style="color:#f87171">3</td><td>0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Antonio Binda</td>
+        <td><span class="badge badge-green">80%</span></td>
+      </tr>
+      <tr>
+        <td><strong>Rosa Poma</strong></td><td>14</td>
+        <td style="color:#4ade80">10</td><td style="color:#f87171">3</td><td>0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Pierre Crespin</td>
+        <td><span class="badge badge-green">71%</span></td>
+      </tr>
+      <tr>
+        <td><strong>Romina Calani</strong></td><td>8</td>
+        <td style="color:#4ade80">5</td><td style="color:#f87171">3</td><td style="color:#fbbf24">1</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Rosa Poma</td>
+        <td><span class="badge badge-yellow">63%</span></td>
+      </tr>
+      <tr>
+        <td><strong>Javier Perez</strong></td><td>11</td>
+        <td style="color:#4ade80">7</td><td style="color:#f87171">3</td><td style="color:#fbbf24">1</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Romina Calani</td>
+        <td><span class="badge badge-yellow">64%</span></td>
+      </tr>
+      <tr>
+        <td><strong>Antonio Binda</strong></td><td>6</td>
+        <td style="color:#4ade80">4</td><td style="color:#f87171">1</td><td>0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Javier Perez</td>
+        <td><span class="badge badge-green">67%</span></td>
+      </tr>
+      <tr class="row-highlight">
+        <td><strong>Pierre Crespin</strong></td><td>13</td>
+        <td style="color:#4ade80">9</td><td>0</td><td style="color:#fbbf24">4</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Bryan Gaitan</td>
+        <td><span class="badge badge-green">69%</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div class="insight-card green"><strong>Mayor Pass Rate</strong>Bryan Gaitan — 80% (12/15 TCs pasaron)</div>
+    <div class="insight-card cyan"><strong>Más TCs como owner</strong>Rosa Poma — 14 TCs en 5 módulos distintos</div>
+    <div class="insight-card yellow"><strong>Más TCs bloqueados</strong>Pierre Crespin — 4 blocked (pasos poco claros en Claim)</div>
+  </div>
+</div>
+
+<!-- SLIDE 12: TCs POR PRIORIDAD -->
+<div class="slide" id="s12">
+  <div class="slide-tag">Resultados</div>
+  <div class="slide-title">TCs por <span>prioridad</span></div>
+  <div class="grid-2" style="gap:24px;align-items:start">
+    <div class="chart-wrap chart-panel chart-panel-tall" style="height:360px">
+      <canvas id="chartPrioridad" role="img" aria-label="Gráfico de barras apiladas por prioridad High Normal y Low">TCs por prioridad: High 29 total (22 pass 6 fail 1 blocked); Normal 36 total (26 pass 6 fail 4 blocked); Low 5 total (4 pass 1 fail).</canvas>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>Distribución por prioridad</h3>
+        <table class="styled" style="margin-top:8px">
+          <thead><tr><th>Prioridad</th><th>Total</th><th>Pass</th><th>Fail</th><th>Blocked</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-red">High</span></td><td>29</td><td style="color:#4ade80">22</td><td style="color:#f87171">6</td><td style="color:#fbbf24">1</td></tr>
+            <tr><td><span class="badge badge-blue">Normal</span></td><td>36</td><td style="color:#4ade80">26</td><td style="color:#f87171">6</td><td style="color:#fbbf24">4</td></tr>
+            <tr><td><span class="badge badge-gray">Low</span></td><td>5</td><td style="color:#4ade80">4</td><td style="color:#f87171">1</td><td>0</td></tr>
+            <tr style="font-weight:600"><td>Total</td><td>70</td><td style="color:#4ade80">52</td><td style="color:#f87171">13</td><td style="color:#fbbf24">5</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px;background:rgba(220,38,38,0.1);border-radius:var(--radius);border:1px solid rgba(220,38,38,0.25);font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+        El Fail Rate en prioridad <strong>High (20.7%)</strong> y Normal (16.7%) es similar, lo que indica que los defectos no están concentrados solo en funcionalidades críticas.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE TCs BLOQUEADOS -->
+<div class="slide" id="sBlocked">
+  <div class="slide-tag">Resultados · Análisis</div>
+  <div class="slide-title">TCs <span>Bloqueados</span> — Análisis</div>
+  <div style="margin-bottom:16px;padding:12px 18px;background:rgba(217,119,6,0.12);border:1px solid rgba(217,119,6,0.3);border-radius:10px;display:flex;gap:24px;align-items:center">
+    <div style="text-align:center;flex-shrink:0">
+      <div style="font-family:var(--font-display);font-size:2.5rem;color:#fbbf24;line-height:1">5</div>
+      <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.5);font-weight:600">TCs Bloqueados</div>
+    </div>
+    <div style="font-size:var(--text-base);color:rgba(255,255,255,0.7);line-height:1.6">
+      Los 5 TCs bloqueados representan el <strong style="color:#fbbf24">7.1%</strong> del total. Todos fueron bloqueados durante la ejecución cruzada por razones relacionadas a <strong style="color:#fff">ambigüedad en los pasos</strong> o <strong style="color:#fff">pre-condiciones no definidas</strong> — no por fallas del sistema.
+    </div>
+  </div>
+  <table class="styled">
+    <thead>
+      <tr><th>#</th><th>TC Bloqueado</th><th>Módulo</th><th>Owner</th><th>Tester</th><th>Razón del bloqueo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="color:#fbbf24;font-weight:700">1</td>
+        <td style="font-size:var(--text-sm)">Verify responsive behavior of "My Claims" table on mobile resolution</td>
+        <td><span class="badge badge-yellow">Claim</span></td>
+        <td style="font-size:var(--text-sm)">Pierre Crespin</td>
+        <td style="font-size:var(--text-sm)">Bryan Gaitan</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">"My Claims" not found in the system</td>
+      </tr>
+      <tr>
+        <td style="color:#fbbf24;font-weight:700">2</td>
+        <td style="font-size:var(--text-sm)">Verify usability and clarity of the "Assign Claim" form fields and actions</td>
+        <td><span class="badge badge-yellow">Claim</span></td>
+        <td style="font-size:var(--text-sm)">Pierre Crespin</td>
+        <td style="font-size:var(--text-sm)">Bryan Gaitan</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">The steps are unclear</td>
+      </tr>
+      <tr>
+        <td style="color:#fbbf24;font-weight:700">3</td>
+        <td style="font-size:var(--text-sm)">Verify that the Hiring Manager field validates input and rejects invalid entries</td>
+        <td><span class="badge badge-yellow">Claim</span></td>
+        <td style="font-size:var(--text-sm)">Pierre Crespin</td>
+        <td style="font-size:var(--text-sm)">Bryan Gaitan</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">The steps are unclear</td>
+      </tr>
+      <tr>
+        <td style="color:#fbbf24;font-weight:700">4</td>
+        <td style="font-size:var(--text-sm)">Verify that the Description field accepts and saves text input correctly</td>
+        <td><span class="badge badge-yellow">Claim</span></td>
+        <td style="font-size:var(--text-sm)">Pierre Crespin</td>
+        <td style="font-size:var(--text-sm)">Bryan Gaitan</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">The steps are unclear</td>
+      </tr>
+      <tr>
+        <td style="color:#fbbf24;font-weight:700">5</td>
+        <td style="font-size:var(--text-sm)">Verify validation behavior when submitting candidate without resume and consent enabled</td>
+        <td><span class="badge badge-yellow">Recruitment</span></td>
+        <td style="font-size:var(--text-sm)">Javier Perez</td>
+        <td style="font-size:var(--text-sm)">Romina Calani</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Inconsistency: resume/consent not required per app logic</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="padding:12px 16px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:10px;font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+      <strong style="color:#a5f3fc;display:block;margin-bottom:4px">Patrón identificado</strong>
+      4 de 5 bloqueados pertenecen al módulo <strong style="color:#fff">Claim</strong> y fueron ejecutados por Bryan Gaitan. Los pasos del TC no especificaban la pre-condición necesaria para encontrar "My Claims".
+    </div>
+    <div style="padding:12px 16px;background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);border-radius:10px;font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+      <strong style="color:#4ade80;display:block;margin-bottom:4px">Acción recomendada</strong>
+      Revisar y reescribir los TCs de Claim con pre-condiciones claras y pasos detallados. El sistema no tiene fallas — el problema es la redacción del TC.
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE: FAILS VS BUGS -->
+<div class="slide" id="sFailVsBug">
+  <div class="slide-tag">Resultados · Análisis</div>
+  <div class="slide-title">Fails vs Bugs — <span>¿Cuándo no reportar?</span></div>
+  <div style="margin-bottom:16px;padding:12px 18px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:10px;font-size:var(--text-base);color:rgba(255,255,255,0.75);line-height:1.6">
+    Un TC en estado <strong style="color:#f87171">Fail</strong> no siempre genera un bug en Jira. Solo se reporta cuando hay un defecto reproducible del sistema, no cuando el fallo se debe a pasos ambiguos o expectativas incorrectas del TC.
+  </div>
+  <table class="styled">
+    <thead><tr><th>Caso</th><th>TCs Fail</th><th>Bugs Jira</th><th>Explicación</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Directory</strong></td>
+        <td style="color:#f87171">3</td><td style="color:#4ade80">0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">La búsqueda manual no funciona — se registró como <strong>Enhancement</strong> (Javier), no como bug formal.</td>
+      </tr>
+      <tr>
+        <td><strong>PIM</strong></td>
+        <td style="color:#f87171">1</td><td style="color:#4ade80">0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Caracteres especiales en Add Employee — fail confirmado, bug no escalado a Jira en el catálogo final.</td>
+      </tr>
+      <tr>
+        <td><strong>Claim</strong></td>
+        <td style="color:#4ade80">0</td><td style="color:#4ade80">0</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">4 TCs en <strong style="color:#fbbf24">Blocked</strong> — problema de redacción del TC, no del sistema.</td>
+      </tr>
+      <tr>
+        <td><strong>My Info</strong></td>
+        <td style="color:#f87171">4</td><td style="color:#f87171">4</td>
+        <td style="font-size:var(--text-sm);color:var(--text-muted)">Correlación 1:1 — cada fail de validación generó un bug reportado.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div class="metric red"><div class="metric-val">13</div><div class="metric-label">TCs Fail</div></div>
+    <div class="metric yellow"><div class="metric-val">5</div><div class="metric-label">TCs Blocked</div></div>
+    <div class="metric blue"><div class="metric-val">9</div><div class="metric-label">Bugs en Jira</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 13: BUGS POR MÓDULO -->
+<div class="slide" id="s13">
+  <div class="slide-tag">Defectos</div>
+  <div class="slide-title">Bugs por <span>módulo / feature</span></div>
+  <div class="grid-2" style="gap:20px;align-items:start">
+    <div class="chart-panel chart-panel-tall" style="height:360px">
+      <div class="chart-wrap">
+      <canvas id="chartBugsMod" role="img" aria-label="Gráfico de bugs por módulo">Bugs por módulo: Recruitment 4, My Info 4, Buzz 1.</canvas>
+      </div>
+    </div>
+    <div>
+      <table class="styled">
+        <thead><tr><th>Módulo</th><th>Bugs</th><th>Severidad máx.</th><th>Reportado por</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Recruitment</strong></td>
+            <td style="color:#f87171;font-weight:600">4</td>
+            <td><span class="sev-major">Major</span></td>
+            <td style="font-size:var(--text-sm)">Rosa Poma (2) · Romina Calani (2)</td>
+          </tr>
+          <tr>
+            <td><strong>My Info</strong></td>
+            <td style="color:#f87171;font-weight:600">4</td>
+            <td><span class="sev-major">Major</span></td>
+            <td style="font-size:var(--text-sm)">Antonio Binda (1) · Javier Perez (1) · Bryan Gaitan (2)</td>
+          </tr>
+          <tr>
+            <td><strong>Buzz</strong></td>
+            <td style="color:#f87171;font-weight:600">1</td>
+            <td><span class="sev-medium">Medium</span></td>
+            <td style="font-size:var(--text-sm)">Jean Pierre Crespin</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:var(--radius);border:1px solid rgba(255,255,255,0.08);font-size:var(--text-sm);color:var(--text-muted)">
+        <strong style="color:#a5f3fc;display:block;margin-bottom:6px">Bugs detallados por módulo:</strong>
+        <div style="line-height:1.8">
+          <span style="color:#f87171">Recruitment:</span> Vacancy Name inválidos · First/Last Name inválidos · Unexpected Error al guardar (Major/High) · Duplicados sin validación<br/>
+          <span style="color:#f87171">My Info:</span> City/ZipCode sin validación (Major) · Navbar no actualiza · Subscription trunca a 0.00 · Memberships sin info de formatos<br/>
+          <span style="color:#f87171">Buzz:</span> Posts duplicados al hacer click repetido en procesamiento
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:10px 14px;background:rgba(34,211,238,0.06);border-radius:var(--radius);border:1px solid rgba(34,211,238,0.15);font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+        <strong style="color:#a5f3fc">Recruitment y My Info</strong> concentran el 89% de los bugs (8 de 9). Buzz aporta el bug restante.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: BUGS POR PRIORIDAD -->
+<div class="slide" id="s14">
+  <div class="slide-tag">Defectos</div>
+  <div class="slide-title">Bugs por <span>prioridad</span></div>
+  <div class="grid-2" style="gap:24px;align-items:center">
+    <div class="chart-wrap chart-panel chart-panel-tall" style="height:360px">
+      <canvas id="chartBugsPrio" role="img" aria-label="Gráfico de pie de bugs por prioridad">Bugs por prioridad: High 1 (11.1%), Medium 8 (88.9%).</canvas>
+    </div>
+    <div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <div class="metric red" style="flex:1"><div class="metric-val">1</div><div class="metric-label">High Priority</div></div>
+        <div class="metric yellow" style="flex:1"><div class="metric-val">8</div><div class="metric-label">Medium Priority</div></div>
+        <div class="metric" style="flex:1"><div class="metric-val">0</div><div class="metric-label">Low Priority</div></div>
+      </div>
+      <div class="con-card" style="margin-bottom:10px"><p><strong style="color:#a5f3fc">1 bug de prioridad High</strong> — "Unexpected Error al guardar candidato" (Rosa Poma). Severidad Major: muestra error pero el registro se guarda. City/ZipCode es Major en severidad pero Medium en prioridad.</p></div>
+      <div class="con-card green"><p>El 88.9% de los bugs son Medium — no hay crisis de funcionalidades críticas. El sistema es operable.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: BUGS POR SEVERIDAD -->
+<div class="slide" id="s15">
+  <div class="slide-tag">Defectos</div>
+  <div class="slide-title">Bugs por <span>severidad</span></div>
+  <div class="grid-2" style="gap:24px;align-items:center">
+    <div class="chart-wrap chart-panel chart-panel-tall" style="height:360px">
+      <canvas id="chartBugsSev" role="img" aria-label="Gráfico de pie de bugs por severidad">Bugs por severidad: Major 2 (22.2%), Medium 6 (66.7%), Low 1 (11.1%).</canvas>
+    </div>
+    <div>
+      <table class="styled">
+        <thead><tr><th>Severidad</th><th>Cant.</th><th>%</th><th>Bugs</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="sev-major">Major</span></td><td>2</td><td>22.2%</td>
+            <td style="font-size:var(--text-sm);color:rgba(255,255,255,0.7)">
+              Unexpected Error al guardar candidato (Rosa) ·
+              City/ZipCode acepta valores inválidos sin validación (Antonio)
+            </td>
+          </tr>
+          <tr>
+            <td><span class="sev-medium">Medium</span></td><td>6</td><td>66.7%</td>
+            <td style="font-size:var(--text-sm);color:rgba(255,255,255,0.7)">
+              Caracteres inválidos en Vacancy Name (Romina) ·
+              Post duplicado al hacer click repetido (Pierre) ·
+              Nombre en navbar no actualiza (Javier) ·
+              Duplicación de candidatos sin validación (Rosa) ·
+              Decimales truncados a 0.00 en Subscription Amount (Bryan) ·
+              Caracteres especiales en First/Last Name de candidato (Romina)
+            </td>
+          </tr>
+          <tr>
+            <td><span class="sev-low">Low</span></td><td>1</td><td>11.1%</td>
+            <td style="font-size:var(--text-sm);color:rgba(255,255,255,0.7)">
+              Add Attachment en Memberships no muestra tipos de archivo aceptados (Bryan)
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;padding:12px 16px;background:rgba(217,119,6,0.1);border-radius:var(--radius);border:1px solid rgba(217,119,6,0.3);font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+        Los 2 bugs <strong style="color:#fbbf24">Major</strong> requieren atención prioritaria. No se encontraron bugs Critical que detengan el sistema.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: BUGS POR TESTER -->
+<div class="slide" id="s16">
+  <div class="slide-tag">Defectos</div>
+  <div class="slide-title">Bugs encontrados <span>por tester</span></div>
+  <div class="grid-2" style="gap:24px;align-items:start">
+    <div class="chart-wrap chart-panel chart-panel-tall" style="height:360px">
+      <canvas id="chartBugsTester" role="img" aria-label="Gráfico de barras de bugs por tester">Bugs encontrados: Rosa Poma 2, Romina Calani 2, Javier Perez 2, Bryan Gaitan 2, Pierre Crespin 2, Antonio Binda 1.</canvas>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>Detalle por tester</h3>
+        <table class="styled" style="margin-top:8px">
+          <thead><tr><th>Tester (ejecutó)</th><th>TCs de</th><th>Bugs</th><th>Descripción</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Rosa Poma</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Romina Calani</td>
+              <td style="color:#f87171;font-weight:600">2</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">Attendance records · Nationalities load</td>
+            </tr>
+            <tr>
+              <td>Romina Calani</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Javier Perez</td>
+              <td style="color:#f87171;font-weight:600">2</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">Directory search manual · Filtros inconsistentes</td>
+            </tr>
+            <tr>
+              <td>Javier Perez</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Antonio Binda</td>
+              <td style="color:#f87171;font-weight:600">2</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">Add Employee chars · Email special chars</td>
+            </tr>
+            <tr>
+              <td>Bryan Gaitan</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Pierre Crespin</td>
+              <td style="color:#f87171;font-weight:600">2</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">Vacancy dropdown · Candidate save error</td>
+            </tr>
+            <tr>
+              <td>Pierre Crespin</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Rosa Poma</td>
+              <td style="color:#f87171;font-weight:600">2</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">First Name chars · My Info connection lost</td>
+            </tr>
+            <tr>
+              <td>Antonio Binda</td>
+              <td style="color:rgba(255,255,255,0.5);font-size:var(--text-sm)">Bryan Gaitan</td>
+              <td>1</td>
+              <td style="font-size:var(--text-sm);color:var(--text-muted)">City/ZipCode sin validación</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:12px 16px;background:rgba(22,163,74,0.1);border-radius:var(--radius);border:1px solid rgba(22,163,74,0.25);font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+        Distribución <strong style="color:#4ade80">muy equilibrada</strong>: 5 de 6 testers encontraron exactamente 2 bugs. La ejecución cruzada garantizó independencia y objetividad.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE OBSERVACIONES DE TESTERS -->
+<div class="slide" id="sObs">
+  <div class="slide-tag">Ejecución · Calidad</div>
+  <div class="slide-title">Observaciones de los <span>testers</span></div>
+  <div class="grid-2" style="gap:16px">
+    <div>
+      <div style="font-size:var(--text-sm);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#4ade80;margin-bottom:10px">✓ EJECUCIONES EXITOSAS</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#4ade80;font-weight:600;margin-bottom:3px">Antonio Binda → Bryan's TCs (My Info)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"It was successful"</div>
+        </div>
+        <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#4ade80;font-weight:600;margin-bottom:3px">Pierre Crespin → Rosa's TCs (Recruitment)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"It was successful" (10 de 14 TCs)</div>
+        </div>
+        <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#4ade80;font-weight:600;margin-bottom:3px">Bryan Gaitan → Pierre's TCs (Recruitment/Leave/Claim)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"It was successful, but the steps weren't very clear" — 9 TCs pasaron</div>
+        </div>
+        <div style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#4ade80;font-weight:600;margin-bottom:3px">Javier Perez → Antonio's TCs (Login/PIM)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"It was successful" (Login 3/3 pass)</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:var(--text-sm);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#f87171;margin-bottom:10px">⚠ OBSERVACIONES CON PROBLEMAS</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#f87171;font-weight:600;margin-bottom:3px">Rosa Poma → Romina's TCs (Time/Admin)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"The steps are not clearly specified" — 2 TCs fallaron por pre-condiciones ambiguas (Nationalities, attendance records)</div>
+        </div>
+        <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#f87171;font-weight:600;margin-bottom:3px">Romina Calani → Javier's TCs (Directory)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"It is only possible to search for an employee using the dropdown list" — bug real confirmado en Directory</div>
+        </div>
+        <div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#f87171;font-weight:600;margin-bottom:3px">Romina Calani → Javier's TCs (Recruitment)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"The system allows the entry of special characters, e.g. '?{}=/&%$#!|@gmail.com'" — bug en campo email</div>
+        </div>
+        <div style="background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.2);border-radius:8px;padding:10px 14px">
+          <div style="font-size:var(--text-sm);color:#fbbf24;font-weight:600;margin-bottom:3px">Bryan Gaitan → Pierre's TCs (Claim)</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.7);font-style:italic">"The steps weren't very clear" — 4 TCs bloqueados por falta de pre-condiciones en módulo Claim</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:10px 16px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.15);border-radius:8px;font-size:var(--text-base);color:rgba(255,255,255,0.7)">
+    <strong style="color:#a5f3fc">Conclusión:</strong> La mayoría de problemas de ejecución se deben a <strong style="color:#fff">redacción ambigua de TCs</strong>, no a fallas del sistema. Los bugs reales fueron correctamente identificados y reportados.
+  </div>
+</div>
+
+<!-- SLIDE 17: ENHANCEMENTS -->
+<div class="slide" id="s17">
+  <div class="slide-tag">Mejoras identificadas</div>
+  <div class="slide-title"><span>Enhancements</span> encontrados</div>
+  <div style="margin-bottom:16px">
+    <div class="enh-row">
+      <div class="enh-tag">UX</div>
+      <div><div class="enh-title">Implementar límite de apilamiento de notificaciones toast para evitar obstrucción de UI</div><div class="enh-owner">Bryan Gaitan · Low</div></div>
+    </div>
+    <div class="enh-row">
+      <div class="enh-tag">UX</div>
+      <div><div class="enh-title">Agregar diálogo de confirmación al navegar sin guardar cambios en formularios editables</div><div class="enh-owner">Antonio Binda · Medium</div></div>
+    </div>
+    <div class="enh-row">
+      <div class="enh-tag">Validación</div>
+      <div><div class="enh-title">Mostrar mensaje de error inline cuando Vacancy Name contiene emojis</div><div class="enh-owner">Romina Calani · Low</div></div>
+    </div>
+    <div class="enh-row">
+      <div class="enh-tag">Funcional</div>
+      <div><div class="enh-title">Permitir búsqueda de empleados escribiendo el nombre completo manualmente en Directory (no solo autocomplete)</div><div class="enh-owner">Javier Perez · Medium</div></div>
+    </div>
+    <div class="enh-row">
+      <div class="enh-tag">UX</div>
+      <div><div class="enh-title">Añadir búsqueda y filtros en el Buzz Feed</div><div class="enh-owner">Pierre Crespin · Medium</div></div>
+    </div>
+    <div class="enh-row">
+      <div class="enh-tag">Responsividad</div>
+      <div><div class="enh-title">Corregir superposición del menú lateral con el contenido principal al 250%+ de zoom de navegador</div><div class="enh-owner">Rosa Poma · Medium</div></div>
+    </div>
+  </div>
+  <div class="grid-3" style="gap:12px">
+    <div class="metric blue"><div class="metric-val">6</div><div class="metric-label">Total enhancements</div></div>
+    <div class="metric"><div class="metric-val">4</div><div class="metric-label">Prioridad Medium</div></div>
+    <div class="metric"><div class="metric-val">2</div><div class="metric-label">Prioridad Low</div></div>
+  </div>
+</div>
+
+<!-- SLIDE BUGS VS ENHANCEMENTS -->
+<div class="slide" id="sBvsE">
+  <div class="slide-tag">Defectos · Comparativa</div>
+  <div class="slide-title">Bugs vs <span>Enhancements</span></div>
+  <div class="grid-2" style="gap:20px;align-items:start">
+    <div>
+      <div style="font-size:var(--text-sm);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#f87171;margin-bottom:10px">🐛 BUGS — 9 issues</div>
+      <table class="styled">
+        <thead><tr><th>Título</th><th>Módulo</th><th>Prior.</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:var(--text-sm)">Caracteres inválidos en Vacancy Name</td><td style="font-size:var(--text-sm)">Recruitment</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Romina</td></tr>
+          <tr><td style="font-size:var(--text-sm)">City/ZipCode acepta datos inválidos</td><td style="font-size:var(--text-sm)">My Info</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Antonio</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Post duplicado al hacer click repetido</td><td style="font-size:var(--text-sm)">Buzz</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Pierre</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Nombre en navbar no se actualiza</td><td style="font-size:var(--text-sm)">My Info</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Javier</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Attachment sin info de formatos válidos</td><td style="font-size:var(--text-sm)">My Info</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Bryan</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Unexpected Error al guardar candidato</td><td style="font-size:var(--text-sm)">Recruitment</td><td><span class="badge badge-red" style="font-size:var(--text-xs)">High</span></td><td style="font-size:var(--text-sm)">Rosa</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Duplicación de candidatos sin validación</td><td style="font-size:var(--text-sm)">Recruitment</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Rosa</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Decimales truncados a 0.00 en Amount</td><td style="font-size:var(--text-sm)">My Info</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Bryan</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Caracteres especiales en First/Last Name</td><td style="font-size:var(--text-sm)">Recruitment</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Romina</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="font-size:var(--text-sm);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4b5fd;margin-bottom:10px">✨ ENHANCEMENTS — 6 mejoras</div>
+      <table class="styled">
+        <thead><tr><th>Título</th><th>Tipo</th><th>Prior.</th><th>Owner</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:var(--text-sm)">Límite de toast notifications</td><td style="font-size:var(--text-sm)">UX</td><td><span class="badge badge-gray" style="font-size:var(--text-xs)">Low</span></td><td style="font-size:var(--text-sm)">Bryan</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Diálogo al navegar sin guardar</td><td style="font-size:var(--text-sm)">UX</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Antonio</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Error inline en Vacancy Name con emojis</td><td style="font-size:var(--text-sm)">Validación</td><td><span class="badge badge-gray" style="font-size:var(--text-xs)">Low</span></td><td style="font-size:var(--text-sm)">Romina</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Búsqueda manual en Directory</td><td style="font-size:var(--text-sm)">Funcional</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Javier</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Search & filter en Buzz Feed</td><td style="font-size:var(--text-sm)">UX</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Pierre</td></tr>
+          <tr><td style="font-size:var(--text-sm)">Menú lateral con zoom 250%+</td><td style="font-size:var(--text-sm)">Responsive</td><td><span class="badge badge-yellow" style="font-size:var(--text-xs)">Med</span></td><td style="font-size:var(--text-sm)">Rosa</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.25);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);color:#f87171">9</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.5)">Bugs</div>
+        </div>
+        <div style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);color:#c4b5fd">6</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.5)">Enhancements</div>
+        </div>
+        <div style="background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.22);border-radius:8px;padding:10px;text-align:center">
+          <div style="font-family:var(--font-display);font-size:var(--text-xl);color:#22d3ee">15</div>
+          <div style="font-size:var(--text-sm);color:rgba(255,255,255,0.5)">Total issues</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- SECTION: CONCLUSIONES -->
+<div class="slide section-slide" id="sSecClose">
+  <div style="text-align:center;max-width:640px;margin:0 auto">
+    <div class="section-act">V</div>
+    <div class="section-label">Parte V</div>
+    <div class="slide-title"><span>Conclusiones</span></div>
+    <div class="slide-subtitle">Hallazgos, recomendaciones y trabajo colaborativo del Grupo A</div>
+  </div>
+</div>
+
+<!-- SLIDE 18: CONCLUSIONES -->
+<div class="slide" id="s18">
+  <div class="slide-tag">Análisis</div>
+  <div class="slide-title"><span>Conclusiones</span></div>
+  <div class="grid-2" style="gap:14px">
+    <div class="con-card green" style="margin-bottom:12px">
+      <h4>Estado general: ESTABLE</h4>
+      <p>Pass Rate del 74.3% y Execution Rate del 100%. Solo 1 bug de prioridad High. El sistema es apto para continuar con un release condicionado.</p>
+    </div>
+    <div class="con-card red" style="margin-bottom:12px">
+      <h4>Módulos con mayor riesgo</h4>
+      <ul>
+        <li>My Info: 4 TCs fallidos (36% fail rate) y 4 bugs — el módulo más crítico</li>
+        <li>Directory: búsqueda manual no funciona, solo autocomplete (3 TCs fail)</li>
+        <li>Recruitment: 4 bugs reportados + 3 TCs bloqueados por redacción de TCs</li>
+        <li>Buzz: 1 bug (posts duplicados) — módulo social interno</li>
+      </ul>
+    </div>
+    <div class="con-card" style="margin-bottom:12px">
+      <h4>Calidad de los test cases</h4>
+      <p>5 TCs bloqueados por pasos poco claros o pre-condiciones ambiguas. Esto indica oportunidades de mejora en la redacción de TCs para futuras iteraciones.</p>
+    </div>
+    <div class="con-card yellow">
+      <h4>Métricas de defectos</h4>
+      <p>Defect Density: 0.13 bugs/TC (9/70). 2 bugs Major pendientes. 1 bug High priority (Unexpected Error). Recruitment y My Info concentran 89% de bugs (8/9). 6 enhancements propuestos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: RECOMENDACIONES -->
+<div class="slide" id="s19">
+  <div class="slide-inner">
+  <header class="slide-header">
+    <div class="slide-tag">Próximos pasos · Producto</div>
+    <div class="slide-title">Recomendaciones para <span>OrangeHRM</span></div>
+    <div class="slide-subtitle" style="margin-bottom:20px">Acciones sugeridas al software según los 9 bugs y 6 enhancements encontrados en el capstone.</div>
+  </header>
+  <div>
+    <div class="rec-item">
+      <div class="rec-num">1</div>
+      <div class="rec-content"><h4>Corregir el bug High en Recruitment <span class="badge badge-red" style="margin-left:8px;vertical-align:middle">High</span></h4><p>Resolver <strong style="color:#fff">Unexpected Error al guardar candidato</strong> (Rosa Poma · prioridad High, severidad Major): el sistema muestra error pero persiste el registro. Es el único blocker real para un release.</p></div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">2</div>
+      <div class="rec-content"><h4>Endurecer validaciones en Recruitment <span class="badge badge-yellow" style="margin-left:8px;vertical-align:middle">Recruitment</span></h4><p>Rechazar caracteres inválidos en Vacancy Name y First/Last Name, y evitar la duplicación de candidatos sin alerta al usuario — 3 bugs adicionales confirmados en este módulo.</p></div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">3</div>
+      <div class="rec-content"><h4>Estabilizar el módulo My Info <span class="badge badge-red" style="margin-left:8px;vertical-align:middle">My Info</span></h4><p>Validar City/ZipCode, sincronizar el nombre en navbar tras editar el perfil, corregir el truncamiento de decimales en Amount y documentar los formatos válidos de attachments — concentra 4 de 9 bugs.</p></div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">4</div>
+      <div class="rec-content"><h4>Habilitar búsqueda manual en Directory <span class="badge badge-blue" style="margin-left:8px;vertical-align:middle">Directory</span></h4><p>Permitir buscar empleados escribiendo el nombre completo, no solo vía autocomplete del dropdown. Tres TCs fallidos confirman la limitación funcional actual del módulo.</p></div>
+    </div>
+    <div class="rec-item">
+      <div class="rec-num">5</div>
+      <div class="rec-content"><h4>Mejorar Buzz y UX transversal <span class="badge badge-purple" style="margin-left:8px;vertical-align:middle">Buzz · UX</span></h4><p>En Buzz: evitar posts duplicados al hacer click repetido durante el procesamiento y añadir búsqueda/filtros al feed. Global: diálogo al navegar sin guardar, límite de toasts y menú lateral en zoom 250%+.</p></div>
+    </div>
+  </div>
+  <div class="callout callout-accent" style="margin-top:16px">
+    OrangeHRM puede considerarse <strong style="color:#a5f3fc">estable con release condicionado</strong> tras resolver el bug High y las validaciones críticas en Recruitment y My Info — módulos que concentran el <strong style="color:#fff">89%</strong> de los bugs reportados.
+  </div>
+  </div>
+</div>
+
+<!-- SLIDE 20: COLABORACIÓN -->
+<div class="slide" id="s20">
+  <div class="slide-tag">Equipo</div>
+  <div class="slide-title">Colaboración del <span>equipo</span></div>
+  <table class="styled">
+    <thead>
+      <tr><th>Estudiante</th><th>Contribución</th><th>Incisos trabajados</th><th>Notas</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Romina Calani Cruz</strong></td><td><span class="badge badge-green">Alta</span></td><td>Estrategia Time + Admin · TCs propios · Ejecutó TCs de Javier</td><td>2 bugs · 1 enhancement</td></tr>
+      <tr><td><strong>Rosa Poma Condori</strong></td><td><span class="badge badge-yellow">Media</span></td><td>Estrategia Performance + Maintenance · Ejecutó TCs de Romina</td><td>2 bugs · 1 enhancement</td></tr>
+      <tr><td><strong>Javier Perez Adriazola</strong></td><td><span class="badge badge-green">Alta</span></td><td>Estructura doc (i, ii, iii, v) · Directory + Dashboard · Ejecutó TCs de Antonio</td><td>1 bug · 1 enhancement</td></tr>
+      <tr><td><strong>Antonio Binda</strong></td><td><span class="badge badge-yellow">Media</span></td><td>Estrategia Login + PIM · Ejecutó TCs de Bryan · Ciclos Zephyr propios</td><td>1 bug · 1 enhancement</td></tr>
+      <tr><td><strong>Jean Pierre Crespin</strong></td><td><span class="badge badge-green">Alta</span></td><td>Estrategia Buzz + Claim · Ejecutó TCs de Rosa · Excel de gráficos</td><td>1 bug · 1 enhancement</td></tr>
+      <tr><td><strong>Bryan Gaitan Echeverry</strong></td><td><span class="badge badge-green">Alta</span></td><td>Estrategia My Info + Recruitment · Ejecutó TCs de Pierre · Excel y presentación inicial</td><td>2 bugs · 2 enhancements</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:16px;display:flex;gap:12px">
+    <div class="metric green" style="flex:1"><div class="metric-val">6</div><div class="metric-label">Integrantes activos</div></div>
+    <div class="metric blue" style="flex:1"><div class="metric-val">70</div><div class="metric-label">TCs totales</div></div>
+    <div class="metric" style="flex:1"><div class="metric-val">~12</div><div class="metric-label">TCs por persona</div></div>
+  </div>
+</div>
+
+<!-- SLIDE 21: GRACIAS -->
+<div class="slide section-slide" id="s21">
+  <div style="text-align:center;max-width:560px;margin:0 auto">
+    <div class="section-label">Fin de la presentación</div>
+    <div class="slide-title" style="font-size:clamp(2.5rem,5vw,3.5rem);margin-bottom:20px">¡<span>Gracias</span>!</div>
+    <div class="slide-subtitle" style="margin:0 auto 28px;text-align:center">OrangeHRM · Ingeniería de Calidad de Software 2<br/>Grupo A · Sección D · Jala University · 2026</div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+      <div class="kpi accent"><div class="kpi-val cover-stat-val" data-count="70">0</div><div class="kpi-label">TCs</div></div>
+      <div class="kpi pass"><div class="kpi-val cover-stat-val" data-count="74.3" data-suffix="%" data-decimals="0">0</div><div class="kpi-label">Pass</div></div>
+      <div class="kpi fail"><div class="kpi-val cover-stat-val" data-count="9">0</div><div class="kpi-label">Bugs</div></div>
+      <div class="kpi block"><div class="kpi-val cover-stat-val" data-count="12">0</div><div class="kpi-label">Módulos</div></div>
+    </div>
+    <div class="closing-team">
+      <span class="closing-chip">RC · Romina</span>
+      <span class="closing-chip">RP · Rosa</span>
+      <span class="closing-chip">JP · Javier</span>
+      <span class="closing-chip">AB · Antonio</span>
+      <span class="closing-chip">PC · Pierre</span>
+      <span class="closing-chip">BG · Bryan</span>
+    </div>
+    <div class="pill-row" style="justify-content:center">
+      <span class="pill">Test Strategy Capstone</span>
+      <span class="pill">SQE2 · Grupo A</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides -->
+
+<!-- PROGRESS DOTS -->
+<div class="progress-dots" id="dots"></div>
+
+<script>
+const SLIDE_ORDER = ['s1','s2','sSecStrategy','s3','s4','sExploratory','sDomainComb','s5','s6','s7','sBuzzLeave','sSecExec','s8','s9','sZephyr','sSecResults','s10','s11','s12new','s12','sBlocked','sFailVsBug','s13','s14','s15','s16','sObs','s17','sBvsE','sSecClose','s18','s19','s20','s21'];
+const TOTAL = SLIDE_ORDER.length;
+const CHAPTERS = [
+  { label:'Introducción', from:1, to:2, cls:'ch-intro' },
+  { label:'Estrategia', from:3, to:11, cls:'ch-strategy' },
+  { label:'Ejecución', from:12, to:15, cls:'ch-exec' },
+  { label:'Resultados', from:16, to:29, cls:'ch-results' },
+  { label:'Conclusiones', from:30, to:TOTAL, cls:'ch-close' }
+];
+let current = 1;
+let chartsBuilt = {};
+let presenterMode = false;
+let chromeTimer = null;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const CHART = {
+  pass:'#16a34a', fail:'#dc2626', block:'#d97706',
+  high:'#dc2626', med:'#d97706', major:'#fbbf24', low:'#64748b', bug:'#dc2626', bg:'#060912'
+};
+
+const chartAnim = { duration: reducedMotion ? 0 : 900, easing: 'easeOutQuart' };
+const chartDefaults = {
+  responsive:true, maintainAspectRatio:false,
+  animation: chartAnim,
+  plugins:{ legend:{ display:false } }
+};
+const axisLight = {
+  ticks:{ color:'rgba(248,250,252,0.9)', font:{ family:'Plus Jakarta Sans', size:14, weight:'500' } },
+  grid:{ color:'rgba(255,255,255,0.06)' }
+};
+const legendPDF = {
+  display:true, position:'top',
+  labels:{
+    color:'rgba(248,250,252,0.9)', boxWidth:10, usePointStyle:true, pointStyle:'rectRounded',
+    font:{ family:'Plus Jakarta Sans', size:15, weight:'600' }, padding:14
+  }
+};
+const barStyle = { borderRadius:6, borderSkipped:false, maxBarThickness:28 };
+const chartLayoutPad = { layout:{ padding:{ top:10, right:24, bottom:10, left:6 } } };
+
+const dataLabelPlugin = {
+  id:'dataLabels',
+  afterDatasetsDraw(chart) {
+    const { ctx, chartArea } = chart;
+    chart.data.datasets.forEach((dataset, i) => {
+      const meta = chart.getDatasetMeta(i);
+      if(meta.hidden) return;
+      meta.data.forEach((bar, j) => {
+        const val = dataset.data[j];
+        if(!val) return;
+        ctx.save();
+        ctx.font = '600 11px Plus Jakarta Sans, sans-serif';
+        ctx.textBaseline = 'middle';
+        if(chart.config.options.indexAxis === 'y') {
+          const barW = Math.abs(bar.x - bar.base);
+          const inside = barW > 26;
+          ctx.textAlign = inside ? 'right' : 'left';
+          ctx.fillStyle = inside ? '#fff' : 'rgba(248,250,252,0.92)';
+          const tx = inside ? bar.x - 8 : Math.min(bar.x + 8, chartArea.right - 4);
+          ctx.fillText(val, tx, bar.y);
+        } else {
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'rgba(248,250,252,0.92)';
+          ctx.fillText(val, bar.x, Math.max(bar.y - 8, chartArea.top + 10));
+        }
+        ctx.restore();
+      });
+    });
+  }
+};
+
+function slideId(n) { return SLIDE_ORDER[n - 1]; }
+
+function getChapter(n) {
+  return CHAPTERS.find(c => n >= c.from && n <= c.to) || CHAPTERS[0];
+}
+
+function updateChapter(n) {
+  const ch = getChapter(n);
+  const el = document.getElementById('chapterLabel');
+  if(!el) return;
+  el.textContent = ch.label;
+  el.className = 'nav-chapter ' + ch.cls;
+}
+
+function updateProgress(n) {
+  document.documentElement.style.setProperty('--progress', (n / TOTAL) * 100 + '%');
+}
+
+function animateCounters(container) {
+  if(!container) return;
+  container.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    if(reducedMotion) {
+      el.textContent = target.toFixed(decimals) + suffix;
+      return;
+    }
+    const start = performance.now();
+    const dur = 1200;
+    function tick(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals) + suffix;
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function animateBars(slideEl) {
+  if(!slideEl || reducedMotion) return;
+  slideEl.querySelectorAll('.pbar-animate').forEach(bar => {
+    bar.style.width = '0';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { bar.style.width = bar.dataset.width + '%'; });
+    });
+  });
+}
+
+function runSlideEffects(n) {
+  const slideEl = document.getElementById(slideId(n));
+  if(n === 1) animateCounters(slideEl);
+  if(slideId(n) === 's10') {
+    animateCounters(slideEl);
+    animateBars(slideEl);
+  }
+  if(slideId(n) === 's21') animateCounters(slideEl);
+}
+
+function goTo(n) {
+  document.getElementById(slideId(current)).classList.remove('active');
+  current = n;
+  const slideEl = document.getElementById(slideId(n));
+  slideEl.classList.add('active');
+  slideEl.scrollTop = 0;
+  document.getElementById('counter').textContent = n + ' / ' + TOTAL;
+  document.getElementById('prevBtn').disabled = n === 1;
+  document.getElementById('nextBtn').disabled = n === TOTAL;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i + 1 === n));
+  updateProgress(n);
+  updateChapter(n);
+  buildChart(slideId(n));
+  runSlideEffects(n);
+  if(presenterMode) showChromeBriefly();
+}
+
+function changeSlide(dir) {
+  const next = current + dir;
+  if(next >= 1 && next <= TOTAL) goTo(next);
+}
+
+function toggleDetailTable() {
+  const wrap = document.getElementById('detailTableWrap');
+  const toggle = document.getElementById('detailToggle');
+  if(!wrap) return;
+  const open = wrap.classList.toggle('open');
+  if(toggle) toggle.textContent = open ? '▾ Ocultar tabla (D)' : '▸ Ver tabla completa (D)';
+}
+
+function togglePresenter() {
+  presenterMode = !presenterMode;
+  document.body.classList.toggle('presenter-mode', presenterMode);
+  if(presenterMode) {
+    showChromeBriefly();
+    if(!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  } else {
+    document.body.classList.remove('show-chrome');
+    if(document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  }
+}
+
+function showChromeBriefly() {
+  document.body.classList.add('show-chrome');
+  clearTimeout(chromeTimer);
+  chromeTimer = setTimeout(() => document.body.classList.remove('show-chrome'), 2500);
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); changeSlide(1); }
+  if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); changeSlide(-1); }
+  if(e.key === 'Home') { e.preventDefault(); goTo(1); }
+  if(e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+  if(e.key === 'f' || e.key === 'F') { e.preventDefault(); togglePresenter(); }
+  if(e.key === 'd' || e.key === 'D') {
+    if(slideId(current) === 's11') { e.preventDefault(); toggleDetailTable(); }
+  }
+  if(e.key === 'Escape' && presenterMode) togglePresenter();
+});
+
+document.addEventListener('mousemove', () => {
+  if(presenterMode) showChromeBriefly();
+});
+
+document.addEventListener('fullscreenchange', () => {
+  if(!document.fullscreenElement && presenterMode) {
+    presenterMode = false;
+    document.body.classList.remove('presenter-mode', 'show-chrome');
+  }
+});
+
+const dotsEl = document.getElementById('dots');
+for(let i = 1; i <= TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 1 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function buildChart(id) {
+  if(chartsBuilt[id]) return;
+  chartsBuilt[id] = true;
+
+  if(id === 's10') {
+    const el = document.getElementById('chartSummary');
+    if(!el) return;
+    new Chart(el, {
+      type:'doughnut',
+      data:{
+        labels:['Pass (52)','Fail (13)','Blocked (5)'],
+        datasets:[{ data:[52,13,5], backgroundColor:[CHART.pass, CHART.fail, CHART.block], borderWidth:3, borderColor:CHART.bg, hoverOffset:6 }]
+      },
+      options:{
+        ...chartDefaults, cutout:'58%',
+        plugins:{ legend:{ ...legendPDF, position:'bottom', labels:{ ...legendPDF.labels, font:{ ...legendPDF.labels.font, size:12 } } } }
+      }
+    });
+  }
+
+  if(id === 's11') {
+    new Chart(document.getElementById('chartModulo'), {
+      type:'bar',
+      plugins:[dataLabelPlugin],
+      data:{
+        labels:['Recruitment','My Info','Directory','Claim','Time','Login','Leave','Performance','Dashboard','Admin','PIM','Maintenance'],
+        datasets:[
+          { label:'Pass', data:[21,7,3,4,3,3,3,3,2,1,0,1], backgroundColor:CHART.pass, ...barStyle },
+          { label:'Fail', data:[3,4,3,0,2,0,0,0,0,1,1,0], backgroundColor:CHART.fail, ...barStyle },
+          { label:'Blocked', data:[3,0,0,2,0,0,1,0,0,0,0,0], backgroundColor:CHART.block, ...barStyle }
+        ]
+      },
+      options:{
+        ...chartDefaults, ...chartLayoutPad, indexAxis:'y',
+        scales:{
+          x:{ stacked:true, ...axisLight, grace:'8%', grid:{ ...axisLight.grid, drawBorder:false } },
+          y:{ stacked:true, ticks:{ color:'rgba(248,250,252,0.9)', font:{ family:'Plus Jakarta Sans', size:14, weight:'500' } }, grid:{ display:false } }
+        },
+        plugins:{ legend: legendPDF }
+      }
+    });
+  }
+
+  if(id === 's12') {
+    new Chart(document.getElementById('chartPrioridad'), {
+      type:'bar',
+      plugins:[dataLabelPlugin],
+      data:{
+        labels:['High','Normal','Low'],
+        datasets:[
+          { label:'Pass', data:[22,26,4], backgroundColor:CHART.pass, ...barStyle },
+          { label:'Fail', data:[6,6,1], backgroundColor:CHART.fail, ...barStyle },
+          { label:'Blocked', data:[1,4,0], backgroundColor:CHART.block, ...barStyle }
+        ]
+      },
+      options:{
+        ...chartDefaults,
+        scales:{
+          x:{ stacked:true, ticks:{ color:'rgba(248,250,252,0.9)', font:{ family:'Plus Jakarta Sans', size:14, weight:'600' } }, grid:{ display:false } },
+          y:{ stacked:true, ...axisLight }
+        },
+        plugins:{ legend: legendPDF }
+      }
+    });
+  }
+
+  if(id === 's13') {
+    new Chart(document.getElementById('chartBugsMod'), {
+      type:'bar',
+      plugins:[dataLabelPlugin],
+      data:{
+        labels:['Recruitment','My Info','Buzz'],
+        datasets:[{ label:'Bugs', data:[4,4,1], backgroundColor:[CHART.fail, CHART.fail, '#22d3ee'], ...barStyle }]
+      },
+      options:{
+        ...chartDefaults, ...chartLayoutPad, indexAxis:'y',
+        scales:{
+          x:{ ...axisLight, suggestedMax:5, ticks:{ ...axisLight.ticks, stepSize:1 }, grid:{ ...axisLight.grid, drawBorder:false } },
+          y:{ ticks:{ color:'rgba(248,250,252,0.9)', font:{ family:'Plus Jakarta Sans', size:14, weight:'600' } }, grid:{ display:false } }
+        },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+
+  if(id === 's14') {
+    new Chart(document.getElementById('chartBugsPrio'), {
+      type:'doughnut',
+      data:{
+        labels:['High (1)','Medium (8)'],
+        datasets:[{ data:[1,8], backgroundColor:[CHART.high, CHART.med], borderWidth:3, borderColor:CHART.bg, hoverOffset:6 }]
+      },
+      options:{ ...chartDefaults, cutout:'62%', plugins:{ legend:{ ...legendPDF, position:'bottom' } } }
+    });
+  }
+
+  if(id === 's15') {
+    new Chart(document.getElementById('chartBugsSev'), {
+      type:'doughnut',
+      data:{
+        labels:['Major (2)','Medium (6)','Low (1)'],
+        datasets:[{ data:[2,6,1], backgroundColor:[CHART.major, CHART.med, CHART.low], borderWidth:3, borderColor:CHART.bg, hoverOffset:6 }]
+      },
+      options:{ ...chartDefaults, cutout:'62%', plugins:{ legend:{ ...legendPDF, position:'bottom' } } }
+    });
+  }
+
+  if(id === 's16') {
+    new Chart(document.getElementById('chartBugsTester'), {
+      type:'bar',
+      plugins:[dataLabelPlugin],
+      data:{
+        labels:['Rosa Poma','Romina Calani','Javier Perez','Bryan Gaitan','Pierre Crespin','Antonio Binda'],
+        datasets:[{ label:'Bugs encontrados', data:[2,2,2,2,2,1], backgroundColor:[CHART.fail,CHART.fail,CHART.fail,CHART.fail,CHART.fail,CHART.block], ...barStyle }]
+      },
+      options:{
+        ...chartDefaults, ...chartLayoutPad, indexAxis:'y',
+        scales:{
+          x:{ ...axisLight, suggestedMax:3.5, ticks:{ ...axisLight.ticks, stepSize:1 }, grid:{ ...axisLight.grid, drawBorder:false } },
+          y:{ ticks:{ color:'rgba(248,250,252,0.9)', font:{ family:'Plus Jakarta Sans', size:14, weight:'500' } }, grid:{ display:false } }
+        },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+}
+
+updateProgress(1);
+updateChapter(1);
+goTo(1);
+</script>
+</body>
+</html>
